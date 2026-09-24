@@ -21,7 +21,7 @@ These instructions are for agents **maintaining this repo**. Adopters never load
 
 ## Versioning
 
-- On any change inside a plugin folder, bump `version` in that plugin's `.claude-plugin/plugin.json` and add a CHANGELOG entry. An unbumped version withholds the update from users.
+- On any change inside a plugin folder, bump `version` in that plugin's `.claude-plugin/plugin.json` and add an entry to that plugin's `CHANGELOG.md`. An unbumped version withholds the update from users.
 - Semver lives in `plugin.json` only. Never add `version` to `.claude-plugin/marketplace.json`.
 
 ## Hard rules

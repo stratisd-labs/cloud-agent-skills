@@ -20,6 +20,7 @@ cloud-agent-skills/
   azure/                            # one plugin
     .claude-plugin/plugin.json      # semver lives here only
     .mcp.json                       # Azure MCP (read-only) + Learn MCP
+    CHANGELOG.md                      # per-plugin release notes
     AGENTS.md                       # optional Azure-specific maintainer notes
     skills/                         # verbs: workflows, one SKILL.md each
       azure-propose-only/
@@ -55,7 +56,7 @@ Each cloud is a separate plugin with its own root, so users install only the clo
 
 ### Versioning
 
-Claude Code caches plugins by version string. If the version doesn't change, users don't get the update, so every change inside a plugin folder needs a bump. The version lives in `plugin.json` only, because two sources of truth drift apart, and `plugin.json` wins anyway when both are set. Tags follow `<cloud>-vX.Y.Z` because each plugin versions independently. Users who want stability pin the marketplace to a tag, and users of other tools pin a git submodule to one.
+Claude Code caches plugins by version string. If the version doesn't change, users don't get the update, so every change inside a plugin folder needs a bump. The version lives in `plugin.json` only, because two sources of truth drift apart, and `plugin.json` wins anyway when both are set. Tags follow `<cloud>-vX.Y.Z`, and each plugin keeps its own `CHANGELOG.md`, because each plugin versions independently and a shared changelog would mix unrelated release histories. Users who want stability pin the marketplace to a tag, and users of other tools pin a git submodule to one.
 
 ### Layered safety model
 
