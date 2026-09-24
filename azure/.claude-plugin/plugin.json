@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Azure agent skills for architecture and DevOps: cost optimization, fault triage, blue-green deployments. Propose-only by default: agents output az CLI plans, you execute.",
   "author": {
-    "name": "Stratis Dermanoutsos",
+    "name": "Efstratios Dermanoutsos",
     "url": "https://github.com/stratisd-labs"
   },
   "homepage": "https://github.com/stratisd-labs/cloud-agent-skills",
