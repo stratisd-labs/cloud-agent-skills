@@ -1,0 +1,6 @@
+{
+  "[json][jsonc][markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.prettierPath": ""
+}
