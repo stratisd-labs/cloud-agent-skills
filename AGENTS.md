@@ -50,12 +50,13 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## JSON
 
-- Format every `.json` and `.jsonc` file with Prettier's defaults:
-  `npx prettier@3.8.1 --write "**/*.{json,jsonc}"`. Run it with `--check`
-  instead of `--write` before committing, and it must pass.
-- The defaults give 2-space indents, double quotes, arrays and objects kept
-  on one line when they fit in 80 characters, and a final newline. Don't
-  hand-format against them.
+- Format every `.json` and `.jsonc` file with Biome, using `biome.json`:
+  `npx @biomejs/biome@2.5.14 format --write .`. Run it without `--write`
+  before committing, and it must pass.
+- Every array item and object member goes on its own line, even when the
+  whole array or object would fit on one line.
+- No trailing commas, in `.json` and `.jsonc` alike.
+- Use 2-space indents and end every file with a newline.
 - A long string value, such as a `description`, stays on one line even past
   80 characters. JSON can't split a string, so the 80-column limit covers the
   structure, not string values.

@@ -10,5 +10,12 @@
   "homepage": "https://github.com/stratisd-labs/cloud-agent-skills",
   "repository": "https://github.com/stratisd-labs/cloud-agent-skills",
   "license": "Apache-2.0",
-  "keywords": ["azure", "agent-skills", "devops", "finops", "azure-cli", "mcp"]
+  "keywords": [
+    "azure",
+    "agent-skills",
+    "devops",
+    "finops",
+    "azure-cli",
+    "mcp"
+  ]
 }
