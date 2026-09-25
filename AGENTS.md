@@ -38,11 +38,27 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Semver lives in `plugin.json` only. Never add `version` to
   `.claude-plugin/marketplace.json`.
 
+## Dependencies
+
+- Each version lives in exactly one place. Never write a version anywhere else,
+  including in docs or workflow `run:` steps:
+  - Maintainer tools (Prettier, markdownlint, Claude Code): `package.json`,
+    pinned exactly, with `package-lock.json`.
+  - Node: `.nvmrc`. Workflows read it with `node-version-file`.
+  - GitHub Actions: the `uses:` lines in `.github/workflows/`.
+  - MCP servers shipped to users: the plugin's `.mcp.json`.
+- Renovate (`renovate.json`) tracks all of these. Its Dependency Dashboard issue
+  lists every dependency and any pending update.
+- A Renovate PR that touches a plugin folder still needs the versioning rule
+  above: bump `plugin.json` and add a `CHANGELOG.md` entry before merging.
+- A new pinned version in a new kind of file needs a Renovate rule too. Check
+  the dashboard lists it.
+
 ## Formatting
 
+- Run `npm ci` once to install the pinned tools.
 - Prettier formats Markdown and JSON, using `.prettierrc.json`:
-  `npx prettier@3.8.1 --write .`. Run it with `--check` before committing, and
-  it must pass.
+  `npm run format`. `npm run format:check` must pass before committing.
 
 ## Markdown
 
@@ -53,8 +69,7 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - `CLAUDE.md` is exempt and stays the single line `@AGENTS.md`.
 - Prettier wraps prose at 80 characters and never splits a link or inline code.
   It doesn't wrap code blocks, so keep their lines under 80 by hand.
-- `npx markdownlint-cli2@0.23.3 "**/*.md"` must pass. The config is
-  `.markdownlint-cli2.jsonc`.
+- `npm run lint:md` must pass. The config is `.markdownlint-cli2.jsonc`.
 
 ## JSON
 

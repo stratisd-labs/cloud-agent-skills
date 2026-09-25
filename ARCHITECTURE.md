@@ -89,6 +89,19 @@ plugin versions independently and a shared changelog would mix unrelated release
 histories. Users who want stability pin the marketplace to a tag, and users of
 other tools pin a git submodule to one.
 
+### One place per version, tracked by Renovate
+
+Pinned versions drift when the same number is written in several places: a
+workflow, the docs and a config file each end up with a different one. So every
+version lives in exactly one file that a tool can read: `package.json` for
+maintainer tools, `.nvmrc` for Node, `uses:` lines for actions, and `.mcp.json`
+for MCP servers. Workflows and docs call the tools without a version.
+
+Renovate reads all four. Dependabot can't read a version inside `.mcp.json`, and
+that is the one that matters most, because it ships to users and the safety
+model depends on it being pinned. Renovate's Dependency Dashboard issue gives a
+single list of every dependency and whether it is out of date.
+
 ### Layered safety model
 
 The agents this repo serves operate on production infrastructure, so the safety

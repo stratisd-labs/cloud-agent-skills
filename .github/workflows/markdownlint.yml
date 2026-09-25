@@ -14,7 +14,10 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
 
       - name: Lint Markdown
-        run: npx --yes markdownlint-cli2@0.23.3 "**/*.md"
+        run: npm run lint:md
