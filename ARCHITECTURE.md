@@ -10,7 +10,7 @@ This file explains why the repo is shaped the way it is. The rules themselves li
 
 ## Layout
 
-```
+```text
 cloud-agent-skills/
   .claude-plugin/marketplace.json   # catalog: lists azure (aws, gcp later)
   AGENTS.md                         # maintainer instructions

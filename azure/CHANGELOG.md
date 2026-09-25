@@ -5,5 +5,6 @@ All notable changes to the `azure` plugin are recorded here. The format follows 
 ## [0.1.0] - Unreleased
 
 ### Added
+
 - Plugin manifest (`.claude-plugin/plugin.json`).
 - MCP configuration (`.mcp.json`): the Azure MCP server started with `--read-only`, and the Microsoft Learn MCP server.
