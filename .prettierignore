@@ -1,5 +1,2 @@
-# JSON is formatted by Biome (see biome.json).
-*.json
-*.jsonc
 # CLAUDE.md must stay the single line `@AGENTS.md`.
 CLAUDE.md

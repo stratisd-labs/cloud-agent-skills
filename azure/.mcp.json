@@ -2,13 +2,7 @@
   "mcpServers": {
     "azure": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@azure/mcp@2.0.5",
-        "server",
-        "start",
-        "--read-only"
-      ]
+      "args": ["-y", "@azure/mcp@2.0.5", "server", "start", "--read-only"]
     },
     "microsoft-learn": {
       "type": "http",

@@ -38,6 +38,12 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Semver lives in `plugin.json` only. Never add `version` to
   `.claude-plugin/marketplace.json`.
 
+## Formatting
+
+- Prettier formats Markdown and JSON, using `.prettierrc.json`:
+  `npx prettier@3.8.1 --write .`. Run it with `--check` before committing, and
+  it must pass.
+
 ## Markdown
 
 - Never let a line go over 80 characters. This applies to prose, lists and code
@@ -45,22 +51,17 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Break lines only between words. Never split a word, inline code or a link. A
   shorter line is fine.
 - `CLAUDE.md` is exempt and stays the single line `@AGENTS.md`.
-- Format Markdown with Prettier, using `.prettierrc.json`:
-  `npx prettier@3.8.1 --write .`. It wraps prose at 80 characters and never
-  splits a link or inline code. `.prettierignore` hands JSON to Biome.
-- Prettier doesn't wrap code blocks. Keep their lines under 80 by hand.
-- `npx prettier@3.8.1 --check .` and `npx markdownlint-cli2 "**/*.md"` must both
-  pass. The lint config is `.markdownlint-cli2.jsonc`.
+- Prettier wraps prose at 80 characters and never splits a link or inline code.
+  It doesn't wrap code blocks, so keep their lines under 80 by hand.
+- `npx markdownlint-cli2 "**/*.md"` must pass. The config is
+  `.markdownlint-cli2.jsonc`.
 
 ## JSON
 
-- Format every `.json` and `.jsonc` file with Biome, using `biome.json`:
-  `npx @biomejs/biome@2.5.14 format --write .`. Run it without `--write` before
-  committing, and it must pass.
-- Every array item and object member goes on its own line, even when the whole
-  array or object would fit on one line.
 - No trailing commas, in `.json` and `.jsonc` alike.
 - Use 2-space indents and end every file with a newline.
+- Let Prettier decide line breaks: an array stays on one line when it fits in 80
+  characters. Don't hand-format against it.
 - A long string value, such as a `description`, stays on one line even past 80
   characters. JSON can't split a string, so the 80-column limit covers the
   structure, not string values.
