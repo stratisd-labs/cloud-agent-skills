@@ -7,4 +7,4 @@ All notable changes to the `azure` plugin are recorded here. The format follows 
 ### Added
 
 - Plugin manifest (`.claude-plugin/plugin.json`).
-- MCP configuration (`.mcp.json`): the Azure MCP server started with `--read-only`, and the Microsoft Learn MCP server.
+- MCP configuration (`.mcp.json`): the Azure MCP server pinned to `@azure/mcp@2.0.5` and started with `--read-only`, and the Microsoft Learn MCP server.
