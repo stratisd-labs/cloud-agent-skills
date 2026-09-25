@@ -1,0 +1,12 @@
+{
+  "config": {
+    // Hard limit: no line over 80 characters, prose and code alike.
+    "MD013": {
+      "line_length": 80
+    }
+  },
+  // Skip everything in .gitignore, such as node_modules/.
+  "gitignore": true,
+  // CLAUDE.md must stay the single line `@AGENTS.md`.
+  "ignores": ["CLAUDE.md", "LICENSE"]
+}

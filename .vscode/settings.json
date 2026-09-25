@@ -1,0 +1,9 @@
+{
+  "[json][jsonc][markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.prettierPath": "",
+  "json.schemaDownload.trustedDomains": {
+    "https://docs.renovatebot.com/": true
+  }
+}

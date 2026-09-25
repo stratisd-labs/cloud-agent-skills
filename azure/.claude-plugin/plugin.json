@@ -1,1 +1,14 @@
-
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "azure",
+  "version": "0.1.0",
+  "description": "Azure agent skills for architecture and DevOps: cost optimization, fault triage, blue-green deployments. Propose-only by default: agents output az CLI plans, you execute.",
+  "author": {
+    "name": "Efstratios Dermanoutsos",
+    "url": "https://github.com/stratisd-labs"
+  },
+  "homepage": "https://github.com/stratisd-labs/cloud-agent-skills",
+  "repository": "https://github.com/stratisd-labs/cloud-agent-skills",
+  "license": "Apache-2.0",
+  "keywords": ["azure", "agent-skills", "devops", "finops", "azure-cli", "mcp"]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "cloud-agent-skills-tooling",
+  "private": true,
+  "description": "Pinned maintainer tooling for this repo. Not published.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:md": "markdownlint-cli2 \"**/*.md\""
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "2.1.281",
+    "markdownlint-cli2": "0.23.3",
+    "prettier": "3.8.1"
+  }
+}
