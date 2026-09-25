@@ -53,7 +53,7 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - `CLAUDE.md` is exempt and stays the single line `@AGENTS.md`.
 - Prettier wraps prose at 80 characters and never splits a link or inline code.
   It doesn't wrap code blocks, so keep their lines under 80 by hand.
-- `npx markdownlint-cli2 "**/*.md"` must pass. The config is
+- `npx markdownlint-cli2@0.23.3 "**/*.md"` must pass. The config is
   `.markdownlint-cli2.jsonc`.
 
 ## JSON

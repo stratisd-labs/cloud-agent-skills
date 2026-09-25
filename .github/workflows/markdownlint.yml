@@ -1,4 +1,4 @@
-name: Prettier
+name: Markdownlint
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 jobs:
-  check:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -16,5 +16,5 @@ jobs:
         with:
           node-version: 24
 
-      - name: Check formatting
-        run: npx --yes prettier@3.8.1 --check .
+      - name: Lint Markdown
+        run: npx --yes markdownlint-cli2@0.23.3 "**/*.md"
