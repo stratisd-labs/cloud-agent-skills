@@ -48,6 +48,18 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - `npx markdownlint-cli2 "**/*.md"` must pass. The config is
   `.markdownlint-cli2.jsonc`.
 
+## JSON
+
+- Format every `.json` and `.jsonc` file with Prettier's defaults:
+  `npx prettier@3.8.1 --write "**/*.{json,jsonc}"`. Run it with `--check`
+  instead of `--write` before committing, and it must pass.
+- The defaults give 2-space indents, double quotes, arrays and objects kept
+  on one line when they fit in 80 characters, and a final newline. Don't
+  hand-format against them.
+- A long string value, such as a `description`, stays on one line even past
+  80 characters. JSON can't split a string, so the 80-column limit covers the
+  structure, not string values.
+
 ## Hard rules
 
 - **Never write client names, tenant or subscription IDs, resource names, IPs or

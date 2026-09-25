@@ -25,7 +25,6 @@ cloud-agent-skills/
     .claude-plugin/plugin.json      # semver lives here only
     .mcp.json                       # Azure MCP (read-only) + Learn MCP
     CHANGELOG.md                    # per-plugin release notes
-    AGENTS.md                       # optional Azure-specific maintainer notes
     skills/                         # verbs: workflows, one SKILL.md each
       azure-propose-only/
       azure-cost-review/ ...
