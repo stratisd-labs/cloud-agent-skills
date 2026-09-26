@@ -10,7 +10,7 @@ description:
 # Azure resource naming
 
 Propose names; never create or rename anything. Output the proposal as described
-in [Output](#output) and let the human apply it.
+in the Output section and let the human apply it.
 
 Learn already covers the baseline. Read these through the Learn MCP instead of
 restating them:
@@ -46,7 +46,7 @@ Lowercase, hyphen-separated, always in this order.
 - `<env>`: `dev`, `test`, `stg` or `prod`. Keep the set closed.
 - `<region>`: a short code from the table below. Microsoft publishes no official
   short codes, so one table must be the single source.
-- `<###>`: optional, three digits. See [Instance numbers](#instance-numbers).
+- `<###>`: optional, three digits. See Instance numbers below.
 
 Resource groups follow the same pattern: `rg-<workload>-<env>-<region>`.
 

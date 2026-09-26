@@ -9,8 +9,8 @@ description:
 
 # Azure resource tagging
 
-Propose tags; never apply them. Output the proposal as described in
-[Output](#output) and let the human apply it.
+Propose tags; never apply them. Output the proposal as described in the Output
+section and let the human apply it.
 
 Learn already covers the baseline. Read these through the Learn MCP instead of
 restating them:
