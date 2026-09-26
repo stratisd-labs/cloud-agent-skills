@@ -12,12 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - run: npm ci
+      - uses: ./.github/actions/setup
 
       - name: Lint Markdown
-        run: npm run lint:md
+        run: pnpm lint:md
