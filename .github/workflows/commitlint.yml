@@ -15,15 +15,10 @@ jobs:
           # commitlint walks the PR's commit range, so it needs the history.
           fetch-depth: 0
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - run: npm ci
+      - uses: ./.github/actions/setup
 
       - name: Lint commit messages
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: npm run lint:commits -- --from "$BASE_SHA" --to "$HEAD_SHA"
+        run: pnpm lint:commits --from "$BASE_SHA" --to "$HEAD_SHA"

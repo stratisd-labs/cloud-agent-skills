@@ -43,7 +43,9 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Each version lives in exactly one place. Never write a version anywhere else,
   including in docs or workflow `run:` steps:
   - Maintainer tools (Prettier, markdownlint, commitlint, Husky, Claude Code):
-    `package.json`, pinned exactly, with `package-lock.json`.
+    `package.json`, pinned exactly, with `pnpm-lock.yaml`.
+  - pnpm: `packageManager` in `package.json`. Workflows read it through
+    `pnpm/action-setup`.
   - Node: `.nvmrc`. Workflows read it with `node-version-file`.
   - GitHub Actions: the `uses:` lines in `.github/workflows/`.
   - MCP servers shipped to users: the plugin's `.mcp.json`.
@@ -56,9 +58,10 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Formatting
 
-- Run `npm ci` once to install the pinned tools.
-- Prettier formats Markdown and JSON, using `.prettierrc.json`:
-  `npm run format`. `npm run format:check` must pass before committing.
+- Run `pnpm install` once to install the pinned tools. Enable pnpm with
+  `corepack enable` if you don't have it.
+- Prettier formats Markdown and JSON, using `.prettierrc.json`: `pnpm format`.
+  `pnpm format:check` must pass before committing.
 
 ## Commits
 
@@ -73,9 +76,9 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Keep the header to 72 characters or fewer. Wrap the body at 100.
 - Mark a breaking change with `!` before the colon or a `BREAKING CHANGE:`
   footer.
-- `npm ci` installs a Husky `commit-msg` hook that runs commitlint locally. The
-  Commitlint workflow re-checks every commit in a pull request. Never bypass the
-  hook with `--no-verify`; fix the message instead.
+- `pnpm install` installs a Husky `commit-msg` hook that runs commitlint
+  locally. The Commitlint workflow re-checks every commit in a pull request.
+  Never bypass the hook with `--no-verify`; fix the message instead.
 
 ## Markdown
 
@@ -86,7 +89,7 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - `CLAUDE.md` is exempt and stays the single line `@AGENTS.md`.
 - Prettier wraps prose at 80 characters and never splits a link or inline code.
   It doesn't wrap code blocks, so keep their lines under 80 by hand.
-- `npm run lint:md` must pass. The config is `.markdownlint-cli2.jsonc`.
+- `pnpm lint:md` must pass. The config is `.markdownlint-cli2.jsonc`.
 
 ## JSON
 

@@ -1,0 +1,19 @@
+name: Setup
+description: >-
+  Install pnpm from package.json, set up Node from .nvmrc with a pnpm store
+  cache, and install the pinned maintainer tools.
+
+runs:
+  using: composite
+  steps:
+    # Reads the pnpm version from `packageManager` in package.json.
+    - uses: pnpm/action-setup@v6
+
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
