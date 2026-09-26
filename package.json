@@ -6,10 +6,15 @@
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:md": "markdownlint-cli2 \"**/*.md\""
+    "lint:commits": "commitlint --verbose",
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@anthropic-ai/claude-code": "2.1.281",
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "husky": "9.1.7",
     "markdownlint-cli2": "0.23.3",
     "prettier": "3.8.1"
   }

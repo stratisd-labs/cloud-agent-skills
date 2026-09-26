@@ -42,8 +42,8 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 
 - Each version lives in exactly one place. Never write a version anywhere else,
   including in docs or workflow `run:` steps:
-  - Maintainer tools (Prettier, markdownlint, Claude Code): `package.json`,
-    pinned exactly, with `package-lock.json`.
+  - Maintainer tools (Prettier, markdownlint, commitlint, Husky, Claude Code):
+    `package.json`, pinned exactly, with `package-lock.json`.
   - Node: `.nvmrc`. Workflows read it with `node-version-file`.
   - GitHub Actions: the `uses:` lines in `.github/workflows/`.
   - MCP servers shipped to users: the plugin's `.mcp.json`.
@@ -59,6 +59,23 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Run `npm ci` once to install the pinned tools.
 - Prettier formats Markdown and JSON, using `.prettierrc.json`:
   `npm run format`. `npm run format:check` must pass before committing.
+
+## Commits
+
+- Follow [Conventional Commits](https://www.conventionalcommits.org/):
+  `type(scope): subject`. The rules are `@commitlint/config-conventional` plus
+  the overrides in `commitlint.config.mjs`.
+- Allowed types: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`,
+  `refactor`, `revert`, `style`, `test`.
+- The scope is optional. When you use one, name the plugin or area, for example
+  `feat(azure): ...` or `ci(workflows): ...`.
+- Write the subject in the imperative mood, lower case, with no trailing period.
+- Keep the header to 72 characters or fewer. Wrap the body at 100.
+- Mark a breaking change with `!` before the colon or a `BREAKING CHANGE:`
+  footer.
+- `npm ci` installs a Husky `commit-msg` hook that runs commitlint locally. The
+  Commitlint workflow re-checks every commit in a pull request. Never bypass the
+  hook with `--no-verify`; fix the message instead.
 
 ## Markdown
 
