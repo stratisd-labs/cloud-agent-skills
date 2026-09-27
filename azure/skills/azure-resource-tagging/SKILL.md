@@ -42,7 +42,7 @@ Tag every resource and resource group with all of these:
 | `solutionname` | Source repo or solution path, or empty if none  |
 | `app`          | Application the resource belongs to             |
 | `environment`  | `dev`, `test`, `stg` or `prod`, as in the name  |
-| `owner`        | A team mailbox or group address, never a person |
+| `owner`        | A team mailbox or group address                 |
 | `team`         | The responsible team                            |
 
 ### Virtual machines
@@ -61,9 +61,15 @@ Virtual machines also get `vm-user`: the account you log in as, such as
 - **Lowercase every value except `businessname`.** Tag values are
   case-sensitive, so `Prod` and `prod` split one cost-report bucket in two. Keep
   one format for `solutionname` across the estate for the same reason.
-- **`owner` is a team address, never a person.** Tags are plain text that
-  surface in cost exports and logs, so a personal email is personal data in the
-  wrong place, and it goes stale when the person leaves.
+- **`owner` is a team address, not a person.** Tags are plain text that surface
+  in cost exports and logs, so a personal email is personal data in the wrong
+  place, and it goes stale when the person leaves.
+
+  > **Exception:** if the team has no mailbox or group address, use the work
+  > email of the person accountable for the resource. Never a private address,
+  > and never pick the person yourself: ask the human. Note the exception in the
+  > output, so the tag is replaced once the team has an address.
+
 - **Tag each resource, not just its resource group.** Resources don't inherit
   group tags, so a tagged group still leaves the cost report empty. Recommend
   the built-in policy _Inherit a tag from the resource group if missing_ as the
@@ -142,7 +148,8 @@ For each resource, give:
 
 Flag any missing tag or inconsistent value as a blocker, not a note. A `vm-user`
 that differs from `osProfile.adminUsername` is a blocker too, unless the human
-confirms that's the account they log in as.
+confirms that's the account they log in as. A personal `owner` under the
+exception is a note, not a blocker.
 
 Last verified: 2026-09-27
 
