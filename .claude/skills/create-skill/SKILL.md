@@ -116,8 +116,10 @@ Last verified: YYYY-MM-DD
 - **The delta.** Tables for lookups, short rules for decisions. Say why when the
   reason isn't obvious; an agent follows a rule it understands more reliably
   than a bare one.
-- **Gotchas.** Only traps you verified or hit in production. Lead with the fact
-  in bold, then the consequence and the fix.
+- **Gotchas.** Only traps you verified or hit in production. Lead with the
+  decision the trap forces, in bold, then the reason. If Learn already states
+  the underlying fact, the bullet exists only for the decision; a bullet that
+  would just repeat Learn is cut.
 - **Checks.** Read-only commands only, each under a comment saying what question
   it answers. Verify every flag against the Learn MCP; tag any you couldn't
   `# verify`.

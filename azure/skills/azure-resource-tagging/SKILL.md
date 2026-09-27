@@ -47,18 +47,16 @@ Tag every resource and resource group with all of these:
 
 ## Gotchas
 
-- **Tag values are case-sensitive; tag names aren't.** `Prod` and `prod` are two
-  cost-report buckets. Lowercase every value except `businessname`, and keep one
-  format for `solutionname` across the estate.
-- **Tags are plain text and not treated as customer data.** They show up in cost
-  exports, deployment history and logs. A personal email in `owner` is personal
-  data in the wrong place, and goes stale when the person leaves. Never put
-  usernames, secrets or incident details in any tag.
-- **Resources don't inherit resource group tags.** Tagging only the group leaves
-  the cost report empty. Tag each resource, and recommend the built-in policy
-  _Inherit a tag from the resource group if missing_ as the backstop.
-- **Some types cap tags at 15, not 50.** Automation, CDN, public and private DNS
-  zones among them. The six tags above fit; a sprawling set won't.
+- **Lowercase every value except `businessname`.** Tag values are
+  case-sensitive, so `Prod` and `prod` split one cost-report bucket in two. Keep
+  one format for `solutionname` across the estate for the same reason.
+- **`owner` is a team address, never a person.** Tags are plain text that
+  surface in cost exports and logs, so a personal email is personal data in the
+  wrong place, and it goes stale when the person leaves.
+- **Tag each resource, not just its resource group.** Resources don't inherit
+  group tags, so a tagged group still leaves the cost report empty. Recommend
+  the built-in policy _Inherit a tag from the resource group if missing_ as the
+  backstop, not as the primary mechanism.
 - **`az resource tag` replaces the whole set by default.** Any plan that adds a
   tag to an existing resource must use `--is-incremental`, or it wipes the tags
   already there.
@@ -89,11 +87,11 @@ param workload string
 param env string
 
 var tags = {
-  businessname: '<BUSINESS NAME>'
-  solutionname: '<REPO PATH>'
+  businessname: '<BUSINESS_NAME>'
+  solutionname: '<REPO_PATH>'
   app: workload
   environment: env
-  owner: '<TEAM MAILBOX>'
+  owner: '<TEAM_MAILBOX>'
   team: '<TEAM>'
 }
 ```
@@ -107,7 +105,7 @@ az resource tag --ids <RESOURCE_ID> --is-incremental \
 
 Flag any missing tag or inconsistent value as a blocker, not a note.
 
-Last verified: 2026-09-26
+Last verified: 2026-09-27
 
 [arm-tags]:
   https://learn.microsoft.com/azure/azure-resource-manager/management/tag-resources

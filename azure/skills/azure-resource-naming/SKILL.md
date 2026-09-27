@@ -90,7 +90,7 @@ production traffic.
 Prefer `preprod` over `staging` for the slot name, so a slot is never confused
 with the `stg` environment.
 
-## Length traps
+### Length budgets
 
 The pattern eats most of the budget on these types. Check the workload fits
 before proposing, and shorten the workload, never the other components.
@@ -112,7 +112,7 @@ A Windows VM's resource name can take 64 characters, but its host name
 (`computerName`) takes only 15. Don't reuse the resource name as the host name;
 give the host name its own short scheme.
 
-## Other gotchas
+## Gotchas
 
 - **Key vault names stay reserved after deletion.** A soft-deleted vault keeps
   its global name for the whole retention period, 7 to 90 days, and purge
@@ -120,10 +120,6 @@ give the host name its own short scheme.
   fails. Check deleted vaults before reusing a name.
 - **`az keyvault check-name` doesn't check vaults.** It accepts only
   `--resource-type hsm`. For vaults, use the deleted-vault check below.
-- **Names are case-insensitive, and APIs may return different casing.** Always
-  lowercase, and compare case-insensitively in scripts.
-- **Names are permanent for most types.** Put anything that changes, such as the
-  owner, team or cost centre, in tags, never in the name.
 
 ## Checks before proposing
 
@@ -163,7 +159,7 @@ resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
 
 Flag any length overflow or taken name as a blocker, not a note.
 
-Last verified: 2026-09-26
+Last verified: 2026-09-27
 
 [caf-naming]:
   https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
