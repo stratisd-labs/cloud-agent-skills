@@ -26,6 +26,10 @@ Answer these before writing anything. If an answer is no, stop and say why.
   doesn't ship.
 - **Is it new?** Look in `<cloud>/skills/`. Extend a skill that already covers
   the task rather than adding a near-duplicate that competes with it.
+- **Does another skill already hold a trap you need?** Search `<cloud>/skills/`
+  for the services the new skill touches. If a trap you need is already written
+  there, don't copy it: move it to `reference/` as `AGENTS.md` describes, and
+  point both skills to it.
 - **Is it one task?** If the draft covers two things an agent would be asked for
   separately, such as naming and tagging, split it into two skills that point to
   each other.

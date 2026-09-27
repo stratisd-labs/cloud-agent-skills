@@ -32,6 +32,10 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   you couldn't verify `# verify`.
 - Service folder names follow the Azure Well-Architected Framework service
   guides.
+- A trap about one service starts in the first skill that needs it. When a
+  second skill needs the same trap, move it to
+  `<cloud>/reference/<service>/<topic>.md` in the same change, and point both
+  skills to it. Never keep two copies.
 
 ## Versioning
 
@@ -40,6 +44,11 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   An unbumped version withholds the update from users.
 - Exception: while the plugin's top `CHANGELOG.md` entry is still `Unreleased`,
   add to that entry instead of bumping. Bump once that version is tagged.
+- Exception: a change only under `<cloud>/evals/` needs no bump and no
+  `CHANGELOG.md` entry. Evals ship with the plugin but never load for users.
+- Tag a release with `pnpm exec claude plugin tag <cloud>`. It creates
+  `<cloud>--vX.Y.Z` and checks that `plugin.json` and the marketplace entry
+  agree.
 - Semver lives in `plugin.json` only. Never add `version` to
   `.claude-plugin/marketplace.json`.
 
