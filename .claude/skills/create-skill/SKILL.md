@@ -146,6 +146,9 @@ This is the contract between the skill and the human, so make it concrete:
   on its line may pass 80 columns; nothing else may.
 - **Placeholders only**: `<SUB>`, `<RG>`, `<NAME>`. Worked examples use generic
   words like `workload1`, never a real client, team, person or email.
+- **Indent code blocks that belong to a list item under that item**, three
+  spaces for a numbered item. An unindented fence ends the list, so the snippet
+  floats free of the deliverable it belongs to.
 - **Keep code blocks under 80 columns by hand**, with `\` line continuations in
   shell. Prettier won't wrap them.
 - **Check placeholders survive the shell.** `<TEAM_MAILBOX>`, not

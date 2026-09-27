@@ -115,30 +115,30 @@ For each resource, give:
    }
    ```
 
-For a virtual machine, add `vm-user` from the admin username parameter:
+   For a virtual machine, add `vm-user` from the admin username parameter:
 
-```bicep
-param adminUsername string
+   ```bicep
+   param adminUsername string
 
-resource vm 'Microsoft.Compute/virtualMachines@2025-11-01' = {
-  name: '<VM_NAME>'
-  location: resourceGroup().location
-  tags: union(tags, { 'vm-user': adminUsername })
-  properties: {
-    osProfile: {
-      adminUsername: adminUsername
-      // ...
-    }
-  }
-}
-```
+   resource vm 'Microsoft.Compute/virtualMachines@2025-11-01' = {
+     name: '<VM_NAME>'
+     location: resourceGroup().location
+     tags: union(tags, { 'vm-user': adminUsername })
+     properties: {
+       osProfile: {
+         adminUsername: adminUsername
+         // ...
+       }
+     }
+   }
+   ```
 
-For an existing resource, give an az CLI plan step instead:
+   For an existing resource, give an az CLI plan step instead:
 
-```bash
-az resource tag --ids <RESOURCE_ID> --is-incremental \
-  --tags owner=<TEAM_MAILBOX> team=<TEAM>
-```
+   ```bash
+   az resource tag --ids <RESOURCE_ID> --is-incremental \
+     --tags owner=<TEAM_MAILBOX> team=<TEAM>
+   ```
 
 Flag any missing tag or inconsistent value as a blocker, not a note. A `vm-user`
 that differs from `osProfile.adminUsername` is a blocker too, unless the human
