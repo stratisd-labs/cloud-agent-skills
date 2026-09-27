@@ -145,17 +145,17 @@ For each resource, give:
 2. Which checks ran and what they returned, or why a check was skipped.
 3. An IaC snippet in the project's IaC language. For Bicep:
 
-```bicep
-param workload string
-param env string
-param regionCode string
+   ```bicep
+   param workload string
+   param env string
+   param regionCode string
 
-resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
-  name: 'kv-${workload}-${env}-${regionCode}'
-  location: resourceGroup().location
-  // ...
-}
-```
+   resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
+     name: 'kv-${workload}-${env}-${regionCode}'
+     location: resourceGroup().location
+     // ...
+   }
+   ```
 
 Flag any length overflow or taken name as a blocker, not a note.
 

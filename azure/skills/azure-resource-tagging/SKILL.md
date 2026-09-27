@@ -101,19 +101,19 @@ For each resource, give:
 2. Which checks ran and what they returned, or why a check was skipped.
 3. An IaC snippet in the project's IaC language. For Bicep:
 
-```bicep
-param workload string
-param env string
+   ```bicep
+   param workload string
+   param env string
 
-var tags = {
-  businessname: '<BUSINESS_NAME>'
-  solutionname: '<REPO_PATH>'
-  app: workload
-  environment: env
-  owner: '<TEAM_MAILBOX>'
-  team: '<TEAM>'
-}
-```
+   var tags = {
+     businessname: '<BUSINESS_NAME>'
+     solutionname: '<REPO_PATH>'
+     app: workload
+     environment: env
+     owner: '<TEAM_MAILBOX>'
+     team: '<TEAM>'
+   }
+   ```
 
 For a virtual machine, add `vm-user` from the admin username parameter:
 
