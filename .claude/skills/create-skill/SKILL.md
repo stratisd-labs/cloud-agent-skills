@@ -114,7 +114,8 @@ Last verified: YYYY-MM-DD
 ### Section notes
 
 - **Propose-only line.** Every skill that touches cloud state opens with it.
-  Keep it to one sentence, and point to the Output section by name.
+  Keep it to one sentence, point to the Output section by name, and name
+  `<cloud>-propose-only`. Don't restate its rules.
 - **Precedence.** Include it whenever the skill imposes a convention. The
   adopter's existing convention always wins over this repo's opinion.
 - **The delta.** Tables for lookups, short rules for decisions. Say why when the
@@ -137,8 +138,9 @@ This is the contract between the skill and the human, so make it concrete:
   deliverables like "explain the options".
 - Always include the evidence: which checks ran and what they returned.
 - Always include something the human can apply: an IaC snippet in the project's
-  IaC language, or az CLI steps for existing resources. Mutating commands appear
-  only as plan steps for the human, never run.
+  IaC language, or a plan in the `<cloud>-propose-only` format for existing
+  resources. Mutating commands appear only as plan steps for the human, never
+  run.
 - End with the blocker rule: which findings stop the proposal, so the agent
   doesn't bury them in a list of notes.
 

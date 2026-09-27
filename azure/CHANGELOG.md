@@ -13,6 +13,9 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 - MCP configuration (`.mcp.json`): the Azure MCP server pinned to
   `@azure/mcp@2.0.5` and started with `--read-only`, and the Microsoft Learn MCP
   server.
+- `azure-propose-only` skill: the read-only rule, the plan format every
+  `azure-*` skill shares, commands that look read-only but aren't, and the steps
+  that can't be rolled back.
 - `azure-resource-naming` skill: a naming convention on top of the Cloud
   Adoption Framework, region codes, deployment slot naming, and length and
   name-reuse traps.

@@ -10,7 +10,7 @@ description:
 # Azure resource tagging
 
 Propose tags; never apply them. Output the proposal as described in the Output
-section and let the human apply it.
+section and let the human apply it, following `azure-propose-only`.
 
 Learn already covers the baseline. Read these through the Learn MCP instead of
 restating them:
@@ -139,7 +139,8 @@ For each resource, give:
    }
    ```
 
-   For an existing resource, give an az CLI plan step instead:
+   For an existing resource, give a plan in the `azure-propose-only` format
+   instead, with a step like this:
 
    ```bash
    az resource tag --ids <RESOURCE_ID> --is-incremental \
