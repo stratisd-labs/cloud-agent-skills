@@ -19,6 +19,9 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Point to the reference files the skill needs instead of copying their content.
 - Any skill that touches cloud state must follow `azure-propose-only`: it
   outputs a plan and never executes one.
+- Never link to a heading inside the same file. Refer to the section by name.
+- To create a skill, follow `.claude/skills/create-skill/SKILL.md`. It holds the
+  workflow and the template; the rules stay here.
 
 ## Reference files (`<cloud>/reference/<service>/<topic>.md`)
 
@@ -35,6 +38,8 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - On any change inside a plugin folder, bump `version` in that plugin's
   `.claude-plugin/plugin.json` and add an entry to that plugin's `CHANGELOG.md`.
   An unbumped version withholds the update from users.
+- Exception: while the plugin's top `CHANGELOG.md` entry is still `Unreleased`,
+  add to that entry instead of bumping. Bump once that version is tagged.
 - Semver lives in `plugin.json` only. Never add `version` to
   `.claude-plugin/marketplace.json`.
 

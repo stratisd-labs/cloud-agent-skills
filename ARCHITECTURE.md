@@ -17,6 +17,7 @@ live in [AGENTS.md](AGENTS.md).
 ```text
 cloud-agent-skills/
   .claude-plugin/marketplace.json   # catalog: lists azure (aws, gcp later)
+  .claude/skills/create-skill/      # maintainer-only: how to add a skill
   AGENTS.md                         # maintainer instructions
   CLAUDE.md                         # imports AGENTS.md
   ARCHITECTURE.md                   # this file
