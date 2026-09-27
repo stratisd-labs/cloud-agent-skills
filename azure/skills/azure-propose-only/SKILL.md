@@ -4,8 +4,7 @@ description:
   Azure change planning, propose-only. Use when a task would create, change,
   scale, restart, tag, rotate or delete anything in Azure, when writing the plan
   another azure-* skill outputs, or when deciding whether an az command is safe
-  to run. For names and tags of new resources, use azure-resource-naming and
-  azure-resource-tagging, which follow this skill.
+  to run.
 ---
 
 # Azure propose-only changes
@@ -21,8 +20,9 @@ restating them:
 - [Lock resources][locks]: what each lock blocks, including POST operations.
 
 This skill adds the rule, the plan format every `azure-*` skill shares, and the
-commands that look read-only but aren't. Names and tags are covered by
-`azure-resource-naming` and `azure-resource-tagging`.
+commands that look read-only but aren't. When a task-specific `azure-*` skill
+fits the task too, use both: that skill decides what to change, this one how to
+plan it.
 
 ## Precedence
 

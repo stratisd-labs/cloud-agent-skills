@@ -15,7 +15,7 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   server.
 - `azure-propose-only` skill: the read-only rule, the plan format every
   `azure-*` skill shares, commands that look read-only but aren't, and the steps
-  that can't be rolled back. The naming and tagging skills follow it.
+  that can't be rolled back.
 - `azure-resource-naming` skill: a naming convention on top of the Cloud
   Adoption Framework, region codes, deployment slot naming, and length and
   name-reuse traps.
