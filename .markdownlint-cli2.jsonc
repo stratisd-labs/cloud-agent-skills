@@ -3,6 +3,10 @@
     // Hard limit: no line over 80 characters, prose and code alike.
     "MD013": {
       "line_length": 80
+    },
+    // Keep a Changelog repeats "Added", "Fixed" and so on under each version.
+    "MD024": {
+      "siblings_only": true
     }
   },
   // Skip everything in .gitignore, such as node_modules/.
