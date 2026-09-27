@@ -10,7 +10,8 @@ description:
 # Azure resource naming
 
 Propose names; never create or rename anything. Output the proposal as described
-in the Output section and let the human apply it.
+in the Output section and let the human apply it, following
+`azure-propose-only`.
 
 Learn already covers the baseline. Read these through the Learn MCP instead of
 restating them:
