@@ -21,7 +21,7 @@ cloud-agent-skills/
   AGENTS.md                         # maintainer instructions
   CLAUDE.md                         # imports AGENTS.md
   ARCHITECTURE.md                   # this file
-  LICENSE, NOTICE, README.md
+  LICENSE, README.md
   azure/                            # one plugin
     .claude-plugin/plugin.json      # semver lives here only
     .mcp.json                       # Azure MCP (read-only) + Learn MCP
@@ -35,6 +35,7 @@ cloud-agent-skills/
         deployment.md  configuration.md
       virtual-network/  key-vault/ ...
     hooks/                          # PreToolUse guard: mutating az in Bash
+    evals/                          # maintainer-only: claude plugin eval
   aws/  gcp/                        # empty until there's real depth
 ```
 
@@ -48,6 +49,12 @@ swap slow", not like "App Service". So skills are verbs (workflows), and
 knowledge about a resource type is a noun that sits in `reference/`. One skill
 pulls in several reference files, and one reference file serves several skills.
 Keeping them apart avoids duplication in both directions.
+
+A trap about one service still starts inside the first skill that needs it, and
+moves to `reference/` only when a second skill needs it too. Until then a
+separate file costs the agent an extra read and saves nothing, because nothing
+is duplicated yet. The second consumer is what creates the duplication the split
+exists to prevent, so that is the moment to extract it.
 
 ### The reference tree mirrors the WAF
 
@@ -85,10 +92,15 @@ Claude Code caches plugins by version string. If the version doesn't change,
 users don't get the update, so every change inside a plugin folder needs a bump.
 The version lives in `plugin.json` only, because two sources of truth drift
 apart, and `plugin.json` wins anyway when both are set. Tags follow
-`<cloud>-vX.Y.Z`, and each plugin keeps its own `CHANGELOG.md`, because each
-plugin versions independently and a shared changelog would mix unrelated release
-histories. Users who want stability pin the marketplace to a tag, and users of
-other tools pin a git submodule to one.
+`<cloud>--vX.Y.Z`, the format `claude plugin tag` creates, and each plugin keeps
+its own `CHANGELOG.md`, because each plugin versions independently and a shared
+changelog would mix unrelated release histories. Users who want stability pin
+the marketplace to a tag, and users of other tools pin a git submodule to one.
+
+Evals are the exception to the bump rule. `claude plugin eval` only finds cases
+below the plugin folder, so `evals/` ships to users, but Claude Code never loads
+it into an agent's context. A change there gives users nothing new, so it needs
+no bump.
 
 ### One place per version, tracked by Renovate
 
