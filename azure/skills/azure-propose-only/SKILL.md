@@ -57,14 +57,18 @@ Never run these, however read-only they look. Put them in the plan:
   `az functionapp keys list`, `az webapp deployment list-publishing-profiles`,
   `az keyvault secret show`, `az account get-access-token`. Nothing changes, but
   the secret lands in the transcript and its logs.
-- `az rest` with `--method` post, put, patch or delete. Even a POST that only
-  reads, such as `listKeys`, can return a secret.
+- `az rest --method post`, or put, patch or delete. Even a POST that only reads,
+  such as `listKeys`, can return a secret.
 - `az account set`: it switches the human's default subscription for every later
   command, theirs included.
 
 Any other command with a verb such as `create`, `update`, `set`, `delete`,
 `add`, `remove`, `start`, `stop`, `restart`, `swap`, `tag`, `assign`,
 `regenerate`, `purge`, `invoke` or `deploy` changes state.
+
+This plugin's hook blocks these in Bash. When it denies a command, put the
+command in the plan; never rephrase it, wrap it in a script or reach it another
+way to get past the hook.
 
 ## IaC-managed resources
 

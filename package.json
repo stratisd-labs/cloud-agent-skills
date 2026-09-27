@@ -9,7 +9,8 @@
     "format:check": "prettier --check .",
     "lint:commits": "commitlint --verbose",
     "lint:md": "markdownlint-cli2 \"**/*.md\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "node --test \"tests/**/*.test.mjs\""
   },
   "devDependencies": {
     "@anthropic-ai/claude-code": "2.1.281",

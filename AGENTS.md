@@ -37,6 +37,19 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   `<cloud>/reference/<service>/<topic>.md` in the same change, and point both
   skills to it. Never keep two copies.
 
+## Hooks (`<cloud>/hooks/`)
+
+- The guard's rules live in its policy JSON, such as `az-guard-policy.json`. The
+  script only parses commands; change what counts as read-only in the JSON.
+- The policy and the "What counts as read-only" section of the propose-only
+  skill must agree. Change both in the same commit; `pnpm test` checks that
+  every `az` command the section names gets the verdict it gives.
+- Add a test case to `tests/` for every command you allow or deny on purpose.
+- Use Node built-ins only. Hooks run on the user's machine, with whatever Node
+  they installed for the Azure MCP.
+- A hook only denies. Never make one answer `allow`.
+- `pnpm test` must pass.
+
 ## Versioning
 
 - On any change inside a plugin folder, bump `version` in that plugin's
@@ -74,8 +87,8 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 
 - Run `pnpm install` once to install the pinned tools. Enable pnpm with
   `corepack enable` if you don't have it.
-- Prettier formats Markdown and JSON, using `.prettierrc.json`: `pnpm format`.
-  `pnpm format:check` must pass before committing.
+- Prettier formats Markdown, JSON and JavaScript, using `.prettierrc.json`:
+  `pnpm format`. `pnpm format:check` must pass before committing.
 
 ## Commits
 

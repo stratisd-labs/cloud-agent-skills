@@ -34,8 +34,9 @@ cloud-agent-skills/
         cost.md  reliability.md  performance.md
         deployment.md  configuration.md
       virtual-network/  key-vault/ ...
-    hooks/                          # PreToolUse guard: mutating az in Bash
+    hooks/                          # PreToolUse guard + its policy JSON
     evals/                          # maintainer-only: claude plugin eval
+  tests/                            # maintainer-only: hook tests
   aws/  gcp/                        # empty until there's real depth
 ```
 
@@ -122,16 +123,25 @@ model is defence in depth, listed from strongest to weakest:
 
 1. **The Azure MCP runs `--read-only`.** The server itself refuses writes,
    whatever the prompt says.
-2. **A `PreToolUse` hook** blocks mutating `az` commands run through Bash, a
-   path that `--read-only` doesn't cover.
-3. **The `azure-propose-only` skill** defines the plan format (discovery,
-   preview, mutation, verification, with irreversible steps last after a
-   checkpoint), so the human reviews a plan instead of trusting an action.
+2. **A `PreToolUse` hook** denies Bash commands that change Azure or print
+   secrets, a path that `--read-only` doesn't cover. It reads `az`, `az rest`,
+   `azd`, Terraform and Az PowerShell, and fails closed on any command that
+   mentions `az` in a form it can't parse. It's a guard, not a sandbox: a script
+   file or an SDK call gets past it.
+3. **The `azure-propose-only` skill** defines the plan format (with irreversible
+   steps last, after a checkpoint), so the human reviews a plan instead of
+   trusting an action.
 4. **The user's own RBAC** is the real ceiling. The agent inherits the user's
    `az login`, which is why the README recommends Reader for agent use.
 
 Each layer covers a gap in the one above it. No single layer is trusted on its
 own.
+
+The hook and the skill must agree on what counts as read-only, so the rules live
+once, in the hook's policy JSON. The skill states them for the agent, and a test
+checks that every command the skill names gets the verdict the skill gives it.
+The hook only ever denies. Answering "allow" would skip the user's own
+permission prompts, and the hook has no business granting anything.
 
 ### Where the rules reach adopters
 
