@@ -1,10 +1,11 @@
 ---
 name: create-skill
 description:
-  Create or restructure an agent skill in this cloud-agent-skills repo, such as
-  a new azure-* skill under azure/skills/. Use when adding a skill to a plugin,
-  turning notes into a skill, or reshaping an existing skill to the repo's
-  standard structure. Not for skills in other repos.
+  Create, restructure or change an agent skill in this cloud-agent-skills repo,
+  such as a new azure-* skill under azure/skills/. Use when adding a skill to a
+  plugin, turning notes into a skill, reshaping an existing skill to the repo's
+  standard structure, or changing what an existing skill tells the agent to do.
+  Not for skills in other repos.
 ---
 
 # Create a skill in this repo
@@ -12,6 +13,10 @@ description:
 This skill is the workflow and the template. The rules live in `AGENTS.md` and
 the reasoning in `ARCHITECTURE.md`; read both first and follow them over
 anything here. Don't copy rules from them into the skill you write.
+
+To change an existing skill rather than create one, keep it to the template in
+step 3 and finish with step 5. Step 5's eval item then means adding or updating
+a case that would fail without your change.
 
 ## 1. Decide whether it's a skill at all
 
@@ -166,9 +171,10 @@ This is the contract between the skill and the human, so make it concrete:
    add the skill to its `CHANGELOG.md`.
 2. Run `pnpm format`, then `pnpm format:check` and `pnpm lint:md`.
 3. Run `pnpm exec claude plugin validate <cloud> --strict`.
-4. Add eval cases under `<cloud>/evals/` as `AGENTS.md` describes, and run
-   `pnpm eval --case "<skill>-*"`. A skill whose cases don't beat the no-plugin
-   arm has no delta left; go back to step 1.
+4. Add eval cases under `<cloud>/evals/` as `AGENTS.md` describes, or for a
+   change, add or update a case that would fail without it. Run `pnpm test`,
+   then `pnpm eval --case "<skill>-*"`. A skill whose cases don't beat the
+   no-plugin arm has no delta left; go back to step 1.
 5. Search the new files for anything that isn't a placeholder: client names,
    emails, IDs, resource names.
 6. Commit following the commit rules in `AGENTS.md`, for example

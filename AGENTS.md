@@ -60,6 +60,10 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   fire, and every case runs at least 3 times.
 - Name cases `<skill>-NN-<what>`, with the skill name minus its cloud prefix,
   and `neg-NN-<what>` for cases where no skill should fire.
+- A change to what a skill tells the agent to do adds or updates a case that
+  would fail without the change. Wording-only edits don't need one.
+- `pnpm test` checks the rules above that need no model: names, case counts,
+  outcome graders and runs.
 - Prompts and graders follow the hard rules below: placeholders only.
 - A case that lets the agent run commands grants `Bash(az:*)` only, so the guard
   hook is what stands between the agent and Azure.
