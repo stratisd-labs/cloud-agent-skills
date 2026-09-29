@@ -1,0 +1,71 @@
+{
+  "az": {
+    "readVerbs": ["list", "show", "exists", "check-name", "what-if", "query"],
+    "readVerbPrefixes": ["list-", "show-", "get-"],
+    "localCommands": ["version", "bicep build", "bicep lint"],
+    "secretWords": [
+      "key",
+      "keys",
+      "secret",
+      "secrets",
+      "credential",
+      "credentials",
+      "connection",
+      "sas",
+      "token",
+      "password",
+      "passwords",
+      "publishing",
+      "appsettings",
+      "kubeconfig"
+    ],
+    "secretWordExceptions": [
+      "keyvault secret list",
+      "keyvault key list",
+      "keyvault certificate list"
+    ]
+  },
+  "azRest": {
+    "readMethods": ["get", "head"],
+    "secretUrlPatterns": [
+      "/secrets",
+      "listkeys",
+      "listsecrets",
+      "listconnectionstrings",
+      "listcredentials",
+      "listaccountsas",
+      "listservicesas",
+      "publishxml"
+    ]
+  },
+  "azd": {
+    "readCommands": ["version", "show", "env list", "template list"]
+  },
+  "terraform": {
+    "readCommands": [
+      "init",
+      "plan",
+      "show",
+      "validate",
+      "fmt",
+      "version",
+      "providers",
+      "graph",
+      "state list"
+    ],
+    "deniedFlags": ["-migrate-state", "-force-copy", "-json"]
+  },
+  "powershell": {
+    "readVerbs": ["get", "test", "find", "search", "resolve", "measure"],
+    "secretWords": [
+      "key",
+      "secret",
+      "credential",
+      "token",
+      "password",
+      "connectionstring",
+      "publishingprofile",
+      "sas"
+    ]
+  }
+}
