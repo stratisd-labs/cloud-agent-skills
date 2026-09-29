@@ -55,8 +55,9 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Every skill ships with at least three eval cases that should trigger it. Each
   case has an outcome grader, not only a `tool_used: Skill` check, which the
   runner leaves out of the score.
-- The suite keeps at least one case where no skill should fire, and every case
-  runs at least 3 times.
+- Every skill also has one case it must not trigger on, such as a tagging task
+  for the naming skill. The suite keeps at least one case where no skill should
+  fire, and every case runs at least 3 times.
 - Name cases `<skill>-NN-<what>`, with the skill name minus its cloud prefix,
   and `neg-NN-<what>` for cases where no skill should fire.
 - Prompts and graders follow the hard rules below: placeholders only.
