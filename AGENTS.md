@@ -50,6 +50,25 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - A hook only denies. Never make one answer `allow`.
 - `pnpm test` must pass.
 
+## Evals (`<cloud>/evals/`)
+
+- Every skill ships with at least three eval cases that should trigger it. Each
+  case has an outcome grader, not only a `tool_used: Skill` check, which the
+  runner leaves out of the score.
+- The suite keeps at least one case where no skill should fire, and every case
+  runs at least 3 times.
+- Name cases `<skill>-NN-<what>`, with the skill name minus its cloud prefix,
+  and `neg-NN-<what>` for cases where no skill should fire.
+- Prompts and graders follow the hard rules below: placeholders only.
+- A case that lets the agent run commands grants `Bash(az:*)` only, so the guard
+  hook is what stands between the agent and Azure.
+- Run `pnpm eval` before merging a skill change, or
+  `pnpm eval --case "<skill>-*"` for one skill. It has a cost cap built in. Bash
+  cases need a sandbox backend: `bubblewrap` and `socat` on Linux, built in on
+  macOS. Run it as a non-root user; as root the sandbox can't start a shell.
+- `--allow-tools` grants Bash to every case in the run, whatever a case's own
+  `allowed_tools` says. Write cases that pass with or without it.
+
 ## Versioning
 
 - On any change inside a plugin folder, bump `version` in that plugin's

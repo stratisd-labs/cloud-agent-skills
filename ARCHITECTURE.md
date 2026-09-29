@@ -72,6 +72,10 @@ repo: what Learn doesn't say. The fixed entry shape (when to use it, the
 decision, gotchas, snippet, cost, last verified) keeps entries comparable and
 makes stale entries easy to spot.
 
+The eval suite measures that claim. Every case runs twice, with the plugin and
+without it, and the score difference is the delta the skill adds. A skill whose
+cases score the same either way restates what the model already knows.
+
 ### Cloud-prefixed skill names
 
 Plugin namespacing (`azure:...`) only exists inside Claude Code. People also

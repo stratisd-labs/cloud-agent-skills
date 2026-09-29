@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "packageManager": "pnpm@12.6.0",
   "scripts": {
+    "eval": "claude plugin eval azure --max-cost-usd 10 --allow-tools \"Bash(az:*)\" --no-publish",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:commits": "commitlint --verbose",
