@@ -2,5 +2,5 @@
 type: llm
 ---
 
-The answer says the name is valid for a key vault: 3 to 24 characters, letters,
-digits and hyphens, starting with a letter.
+The answer says yes, the name is valid for an Azure key vault. Any reason given
+in support, such as the length limit or the allowed characters, is fine.
