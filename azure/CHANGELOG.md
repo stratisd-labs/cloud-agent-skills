@@ -26,3 +26,4 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   name-reuse traps.
 - `azure-resource-tagging` skill: a required tag set, a `vm-user` tag recording
   the login account on virtual machines, and the traps that break cost reports.
+  It never fills in a person's address for `owner` itself.
