@@ -3,4 +3,4 @@ type: regex
 match: contains
 ---
 
-storderintakeprodweu
+\bstorderintakeprodweu\b
