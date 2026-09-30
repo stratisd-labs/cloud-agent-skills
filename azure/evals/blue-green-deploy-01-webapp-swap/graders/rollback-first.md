@@ -1,7 +1,8 @@
 ---
-type: llm
+type: regex
+target: last_message
+match: contains
+flags: i
 ---
 
-The step that completes the swap shows its rollback command (swapping the same
-slots back) before or directly with the cut-over command, and the plan has a
-separate stop before that step.
+#\s{0,3}rollback[^\n]{0,200}\n[\s\S]{0,400}?slot\sswap[\s\S]{0,600}?#\s{0,3}cut-?over

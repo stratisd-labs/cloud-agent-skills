@@ -1,8 +1,8 @@
 ---
-type: llm
+type: regex
+target: last_message
+match: contains
+flags: i
 ---
 
-The answer warns that the queue-triggered function also runs in the preprod slot
-and will consume production queue messages unless its connection setting is a
-sticky slot setting pointing elsewhere, or the function is disabled in the slot
-(for example with a sticky AzureWebJobs.<FUNCTION>.Disabled setting).
+AzureWebJobs\.[^.\s`]{1,80}\.Disabled|(queue|storage)[^\n]{0,150}(sticky|slot\ssetting)|(sticky|slot\ssetting)[^\n]{0,150}(queue|storage)

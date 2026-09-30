@@ -65,6 +65,11 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - `pnpm test` checks the rules above that need no model: names, case counts,
   outcome graders and runs.
 - Prompts and graders follow the hard rules below: placeholders only.
+- Write a regex grader's pattern with no spaces and no `*`: use `\s` and
+  `{0,n}`. Prettier wraps prose at spaces and escapes `*`, which breaks the
+  pattern without an error.
+- Check structure in a long answer with a regex grader, not an `llm` one. Judges
+  miss content deep in answers of several thousand characters.
 - A case that lets the agent run commands grants `Bash(az:*)` only, so the guard
   hook is what stands between the agent and Azure.
 - Run `pnpm eval` before merging a skill change, or
