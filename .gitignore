@@ -1,4 +1,8 @@
-node_modules/
-
 # Eval run output
 */evals/results/
+
+# Node
+node_modules/
+
+# MacOS
+.DS_Store
