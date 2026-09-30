@@ -27,3 +27,8 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 - `azure-resource-tagging` skill: a required tag set, a `vm-user` tag recording
   the login account on virtual machines, and the traps that break cost reports.
   It never fills in a person's address for `owner` itself.
+- `azure-blue-green-deploy` skill: releases through deployment slots, Container
+  Apps revisions or two stacks, in a fixed order with the rollback written above
+  every cut-over. Covers settings that swap by default, warm-up that treats a
+  500 as ready, queue triggers running in a slot, the `latestRevision` trap, and
+  migrations that make a swap-back impossible.
