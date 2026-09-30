@@ -143,7 +143,9 @@ For each change the human asked for, give a plan with these parts, in order:
 1. **Context**: the goal in one line, the subscription, the scope, and the
    account from `az account show`.
 2. **Discovery**: which checks ran and what they returned, or why a check was
-   skipped.
+   skipped. If checks can't run at all, such as with no CLI or no access, don't
+   stop: give the plan anyway, and list what each skipped check would have
+   answered as a blocker for the human to clear.
 3. **Preview**: the what-if or `terraform plan` summary, with noise and `Ignore`
    results called out. For a change no preview covers, give each property's
    current value and its new value instead.

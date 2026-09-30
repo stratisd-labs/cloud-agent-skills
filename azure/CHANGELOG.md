@@ -15,7 +15,8 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   server.
 - `azure-propose-only` skill: the read-only rule, the plan format every
   `azure-*` skill shares, commands that look read-only but aren't, and the steps
-  that can't be rolled back.
+  that can't be rolled back. When discovery can't run, it still gives the plan,
+  with the unanswered checks as blockers.
 - `PreToolUse` hook (`hooks/`): denies Bash commands that change Azure or print
   secrets, across `az`, `az rest`, `azd`, Terraform and Az PowerShell, and
   points the agent to `azure-propose-only`. It fails closed on commands that
@@ -25,3 +26,4 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   name-reuse traps.
 - `azure-resource-tagging` skill: a required tag set, a `vm-user` tag recording
   the login account on virtual machines, and the traps that break cost reports.
+  It never fills in a person's address for `owner` itself.

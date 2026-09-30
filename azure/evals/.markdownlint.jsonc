@@ -1,0 +1,9 @@
+// Eval prompts and graders are raw text for an agent, not documents.
+{
+  // They start with frontmatter and a prompt, never a heading.
+  "MD041": false,
+  // Placeholders such as <SUB> read as inline HTML.
+  "MD033": false,
+  // Prompts carry plain addresses such as team@example.com.
+  "MD034": false
+}
