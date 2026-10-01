@@ -30,8 +30,10 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   It never fills in a person's address for `owner` itself.
 - `azure-blue-green-deploy` skill: releases through deployment slots, Container
   Apps revisions or two stacks, in a fixed order with the abort command written
-  above every cut-over and a separate rollback for the window after it. Covers
-  settings that swap by default, a sticky list that must be written in full,
-  warm-up that treats a 500 as ready, queue triggers running in a slot, the
-  `latestRevision` trap, Container Apps labels read as live and candidate rather
-  than fixed colors, and migrations that make a swap-back impossible.
+  above every slot cut-over and a separate rollback for the window after it. A
+  first Container Apps release pins and labels the live revision before
+  deploying. Covers settings that swap by default, a sticky list that must be
+  written in full, warm-up that treats a 500 as ready, queue triggers running in
+  a slot, the `latestRevision` trap, Container Apps labels read as live and
+  candidate rather than fixed colors, a warm-up gate that checks dependencies,
+  and migrations that make a swap-back impossible.

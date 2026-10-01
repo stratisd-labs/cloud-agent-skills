@@ -100,12 +100,14 @@ Every plan follows this order. It is the delta on top of the
   Sharing production's identity hands an unverified build production's data
   access, and hides a missing sticky setting. A staging-only identity breaks the
   swap instead: every swap restarts the slot with production's settings and
-  warms it up under the slot's identity. Grant the slot identity only what the
-  warm-up path needs in production, ideally read-only, or keep the warm-up path
-  free of dependencies. Generate both identities' role assignments from one IaC
-  module, and give the slot the same VNet integration. Which identity the
-  swapped workers hold after the cut-over isn't documented: test a swap on a
-  non-production app first.
+  warms it up under the slot's identity. Point the warm-up path at a health
+  endpoint that reads each dependency, and grant the slot identity read-only
+  access to them in production. A warm-up path with no dependencies passes a
+  build that can't reach its database. If read access can't be granted, say in
+  the plan that the warm-up gate proves only that the process starts. Generate
+  both identities' role assignments from one IaC module, and give the slot the
+  same VNet integration. Which identity the swapped workers hold after the
+  cut-over isn't documented: test a swap on a non-production app first.
 - **On an App Service plan, slots share production's instances.** Load-testing
   the slot, or a build that crash-loops there, takes capacity from production;
   load-test elsewhere. Consumption slots scale on their own.
@@ -132,10 +134,13 @@ Every plan follows this order. It is the delta on top of the
   can't be disabled this way.
 - **Check function keys before a Functions swap.** With
   `AzureWebJobsSecretStorageType` set to `files`, the swap resets them and
-  callers using them break.
-- **On Premium, set `WEBSITE_OVERRIDE_STICKY_DIAGNOSTICS_SETTINGS` to `0` on all
-  slots when `AzureWebJobsStorage` is network-restricted.** Otherwise a legacy
-  logging feature can fail the swap.
+  callers using them break. The guard blocks `appsettings list` even with a
+  filter, so read the value from IaC, or put the filtered read in the plan for
+  the human.
+- **Set `WEBSITE_OVERRIDE_STICKY_DIAGNOSTICS_SETTINGS` to `0` on all slots when
+  `AzureWebJobsStorage` is network-restricted.** Otherwise a legacy logging
+  feature can fail the swap. Take the storage account's name from IaC, not from
+  the connection string, and check its `networkRuleSet`.
 - **Roll back a percentage split with `az webapp traffic-routing clear`.**
   Clients already routed stay pinned to the slot by cookie for up to an hour.
 
@@ -144,18 +149,24 @@ Every plan follows this order. It is the delta on top of the
 - **Switch to multiple revision mode before deploying green.** In single
   revision mode the new revision replaces the old one, leaving nothing to roll
   back to.
-- **Pin traffic to the current revision before deploying green.** With a
-  `latestRevision: true` entry, the deploy itself becomes the cut-over.
+- **Pin traffic to the current revision, and label it, before deploying green.**
+  With a `latestRevision: true` entry, the deploy itself becomes the cut-over.
+  On a first release the live revision usually has no label, and
+  `--label-weight` fails on a label that doesn't exist.
 - **Read which label is live before planning; never assume `blue`.** After each
   release the roles swap, so a plan that hardcodes `blue` as the old version
   rolls the second release forward instead of back. Read the live label from
   `ingress traffic show`, call it `<LIVE>`, and put `<CANDIDATE>` on the new
   revision.
+- **`revision label add` moves a label that another revision holds**, such as
+  `<CANDIDATE>` still on the revision from the release before last. It can ask
+  to confirm, so the plan passes `--yes`.
 - **Don't use `revision label swap` for the cut-over or its cleanup.** It moves
   the traffic weights with the labels, so it's another cut-over.
 - **Set both weights in every change.** They must add up to 100.
-- **Keep blue active at weight 0 through the window.** Revisions past the
-  retention cap are purged, and a purged revision can't be a rollback target.
+- **Keep the `<LIVE>` revision active at weight 0 through the window.**
+  Revisions past the retention cap are purged, and a purged revision can't be a
+  rollback target.
 
 ### Database changes
 
@@ -202,6 +213,10 @@ az containerapp ingress traffic show --resource-group <RG> --name <APP> \
   --subscription <SUB>
 az containerapp revision list --resource-group <RG> --name <APP> \
   --subscription <SUB> --output table
+
+# Functions: network rules on the AzureWebJobsStorage account
+az storage account show --resource-group <RG> --name <STORAGE> \
+  --subscription <SUB> --query networkRuleSet
 ```
 
 For function apps, use the `az functionapp` form of the same commands.
@@ -227,12 +242,22 @@ Give one plan in the `azure-propose-only` format, with these additions:
    ```
 
    For Container Apps, step 1 labels the new revision and step 5 moves the
-   weights:
+   weights. There's no preview, so the abort is to leave `<CANDIDATE>` at weight
+   0; nothing runs. When the live revision has no label, or traffic has a
+   `latestRevision: true` entry, pin and label it before step 1:
 
    ```bash
+   # Before step 1: pin all traffic to the live revision, then label it
+   az containerapp ingress traffic set --resource-group <RG> \
+     --name <APP> --revision-weight <LIVE_REVISION>=100 \
+     --subscription <SUB>
+   az containerapp revision label add --resource-group <RG> \
+     --name <APP> --revision <LIVE_REVISION> --label <LIVE> --yes \
+     --subscription <SUB>
+
    # Step 1: label the new revision as the candidate
    az containerapp revision label add --resource-group <RG> \
-     --name <APP> --revision <NEW_REVISION> --label <CANDIDATE> \
+     --name <APP> --revision <NEW_REVISION> --label <CANDIDATE> --yes \
      --subscription <SUB>
 
    # Step 5, cut-over: all traffic to the candidate
@@ -273,7 +298,7 @@ Give one plan in the `azure-propose-only` format, with these additions:
 Flag any of these as a blocker, not a note: an environment-specific setting that
 isn't sticky, a sticky list that drops existing names, a breaking migration with
 no expand half, a traffic entry with `latestRevision: true`, a slot on Flex
-Consumption, and a cut-over with no abort command above it.
+Consumption, and a slot cut-over with no abort command above it.
 
 Last verified: 2026-10-01
 
