@@ -30,6 +30,13 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   IaC snippet, the cost impact, and a `Last verified: YYYY-MM-DD` line.
 - Verify every `az` flag against the Learn MCP before writing it. Tag any flag
   you couldn't verify `# verify`.
+- Then run every read-only command the file lists through the Azure MCP or `az`,
+  against a non-production subscription, and check it returns what the file
+  says. Report which ones ran; a command you couldn't run isn't a blocker, but
+  say so.
+- To get both MCP servers, start Claude Code with the plugin loaded:
+  `claude --plugin-dir ./<cloud>`. It also loads the guard hook. Don't add a
+  root `.mcp.json`: it would pin the server version in a second place.
 - Service folder names follow the Azure Well-Architected Framework service
   guides.
 - A trap about one service starts in the first skill that needs it. When a
@@ -67,7 +74,8 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Prompts and graders follow the hard rules below: placeholders only.
 - Write a regex grader's pattern with no spaces and no `*`: use `\s` and
   `{0,n}`. Prettier wraps prose at spaces and escapes `*`, which breaks the
-  pattern without an error.
+  pattern without an error. Don't start it with `#`, which markdownlint reads as
+  a heading; write `[#]`.
 - Check structure in a long answer with a regex grader, not an `llm` one. Judges
   miss content deep in answers of several thousand characters.
 - A case that lets the agent run commands grants `Bash(az:*)` only, so the guard
