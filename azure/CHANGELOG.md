@@ -28,7 +28,8 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   the login account on virtual machines, and the traps that break cost reports.
   It never fills in a person's address for `owner` itself.
 - `azure-blue-green-deploy` skill: releases through deployment slots, Container
-  Apps revisions or two stacks, in a fixed order with the rollback written above
-  every cut-over. Covers settings that swap by default, warm-up that treats a
-  500 as ready, queue triggers running in a slot, the `latestRevision` trap, and
-  migrations that make a swap-back impossible.
+  Apps revisions or two stacks, in a fixed order with the abort command written
+  above every cut-over and a separate rollback for the window after it. Covers
+  settings that swap by default, a sticky list that must be written in full,
+  warm-up that treats a 500 as ready, queue triggers running in a slot, the
+  `latestRevision` trap, and migrations that make a swap-back impossible.
