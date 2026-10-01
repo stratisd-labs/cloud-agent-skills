@@ -14,8 +14,9 @@ This skill is the workflow and the template. The rules live in `AGENTS.md` and
 the reasoning in `ARCHITECTURE.md`; read both first and follow them over
 anything here. Don't copy rules from them into the skill you write.
 
-Start the session with `claude --plugin-dir ./<cloud>` so the Learn and Azure
-MCP servers are available; steps 1 and 4 need both.
+Steps 1 and 4 need the Learn and Azure MCP servers. If their tools aren't
+available, stop and ask the human to restart with
+`claude --plugin-dir ./<cloud>`.
 
 To change an existing skill rather than create one, keep it to the template in
 step 3 and finish with step 5. Step 5's eval item then means adding or updating
