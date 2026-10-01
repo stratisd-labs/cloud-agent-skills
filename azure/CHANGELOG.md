@@ -32,4 +32,5 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   above every cut-over and a separate rollback for the window after it. Covers
   settings that swap by default, a sticky list that must be written in full,
   warm-up that treats a 500 as ready, queue triggers running in a slot, the
-  `latestRevision` trap, and migrations that make a swap-back impossible.
+  `latestRevision` trap, Container Apps labels read as live and candidate rather
+  than fixed colors, and migrations that make a swap-back impossible.
