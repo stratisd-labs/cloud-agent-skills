@@ -46,7 +46,8 @@ the plan format comes from `azure-propose-only`.
   Consumption has one staging slot only.
 - **Functions on Flex Consumption**: no slots. Rolling updates are the built-in
   option and aren't blue-green; two apps behind a gateway are.
-- **Container Apps**: multiple revision mode, labels and traffic weights.
+- **Container Apps**, and Functions hosted on Container Apps: multiple revision
+  mode, labels and traffic weights. Deployment slots don't apply there.
 - **Several resources that change together**: two stacks behind Front Door or
   Traffic Manager.
 
@@ -60,8 +61,8 @@ expire.
 Every plan follows this order. It is the delta on top of the
 `azure-propose-only` format, not a replacement for it.
 
-1. **Deploy green** to the slot, or to a new revision with the `green` label,
-   through the project's pipeline. It takes no production traffic yet.
+1. **Deploy green** to the slot, or to a new revision carrying the candidate
+   label, through the project's pipeline. It takes no production traffic yet.
 2. **Verify green on its own URL**: the slot's host name, or the label's URL.
 3. **Preview**: for a slot, `swap --action preview`. It applies production's
    settings to the slot and restarts it, but moves no traffic.
@@ -89,17 +90,25 @@ Every plan follows this order. It is the delta on top of the
   slot.** Otherwise the slot's test database or queue moves into production with
   the swap. Check which names are sticky with `slotConfigNames`, which returns
   names only; `appsettings list` prints values.
-- **`slotConfigNames` replaces the whole sticky list.** An IaC or `az` change
-  that lists only the new name makes every other sticky setting swappable again.
-  Always write the full list: the names `slotConfigNames` returns now, plus the
-  new ones.
-- **Give both slots one user-assigned identity.** Managed identities, VNet
-  integration and IP restrictions stay with the slot, so the slot is verified
-  with its own identity and network. A shared user-assigned identity needs one
-  set of role assignments that can't drift; give the slot the same VNet
-  integration too.
-- **Slots share the plan's instances.** Load-testing the slot, or a build that
-  crash-loops there, takes capacity from production. Load-test elsewhere.
+- **Write the full sticky list in IaC.** A PUT to `slotConfigNames` (Bicep, ARM,
+  `az rest`, `az resource`) replaces the whole list, so one that names only the
+  new setting makes every other sticky setting swappable again. List the names
+  `slotConfigNames` returns now, plus the new ones.
+  `az webapp config appsettings set --slot-settings` adds to the list instead.
+- **Give the slot its own identity, with least privilege in production.**
+  Managed identities, VNet integration and IP restrictions stay with the slot.
+  Sharing production's identity hands an unverified build production's data
+  access, and hides a missing sticky setting. A staging-only identity breaks the
+  swap instead: every swap restarts the slot with production's settings and
+  warms it up under the slot's identity. Grant the slot identity only what the
+  warm-up path needs in production, ideally read-only, or keep the warm-up path
+  free of dependencies. Generate both identities' role assignments from one IaC
+  module, and give the slot the same VNet integration. Which identity the
+  swapped workers hold after the cut-over isn't documented: test a swap on a
+  non-production app first.
+- **On an App Service plan, slots share production's instances.** Load-testing
+  the slot, or a build that crash-loops there, takes capacity from production;
+  load-test elsewhere. Consumption slots scale on their own.
 - **Set `WEBSITE_SWAP_WARMUP_PING_STATUSES` to `200`** and
   `WEBSITE_SWAP_WARMUP_PING_PATH` to the health endpoint, on both slots. By
   default any status, 500 included, counts as warmed up.
@@ -115,17 +124,20 @@ Every plan follows this order. It is the delta on top of the
   Event Hubs and timer functions in the slot consume whatever their settings
   point to. Disable them in the slot with a sticky
   `AzureWebJobs.<FUNCTION>.Disabled` set to `true` there and `false` in
-  production. During a preview, the slot runs with production's values, so they
-  run against production from step 3. On Linux, a function with a hyphen in its
-  name can't be disabled this way.
+  production. A swap applies production's values to the slot, so these functions
+  run against production from step 3 until the cut-over. With timer or
+  single-consumer functions, plan a direct swap gated by warm-up, which keeps
+  that window to minutes. Otherwise give the preview a deadline in the plan, by
+  which it's completed or reset. On Linux, a function with a hyphen in its name
+  can't be disabled this way.
 - **Check function keys before a Functions swap.** With
   `AzureWebJobsSecretStorageType` set to `files`, the swap resets them and
   callers using them break.
-- **A Functions swap can fail when `AzureWebJobsStorage` is
-  network-restricted.** Check the storage account's network rules in discovery.
-- **A percentage split is per client.** A routed client stays pinned to the slot
-  by cookie for up to an hour, so 10% means 10% of clients. Its rollback is
-  `az webapp traffic-routing clear`.
+- **On Premium, set `WEBSITE_OVERRIDE_STICKY_DIAGNOSTICS_SETTINGS` to `0` on all
+  slots when `AzureWebJobsStorage` is network-restricted.** Otherwise a legacy
+  logging feature can fail the swap.
+- **Roll back a percentage split with `az webapp traffic-routing clear`.**
+  Clients already routed stay pinned to the slot by cookie for up to an hour.
 
 ### Container Apps revisions
 
@@ -134,9 +146,13 @@ Every plan follows this order. It is the delta on top of the
   back to.
 - **Pin traffic to the current revision before deploying green.** With a
   `latestRevision: true` entry, the deploy itself becomes the cut-over.
-- **Label both revisions before the first weight change.** `--label-weight`
-  fails on a label no revision carries; give blue its label before deploying
-  green.
+- **Read which label is live before planning; never assume `blue`.** After each
+  release the roles swap, so a plan that hardcodes `blue` as the old version
+  rolls the second release forward instead of back. Read the live label from
+  `ingress traffic show`, call it `<LIVE>`, and put `<CANDIDATE>` on the new
+  revision.
+- **Don't use `revision label swap` for the cut-over or its cleanup.** It moves
+  the traffic weights with the labels, so it's another cut-over.
 - **Set both weights in every change.** They must add up to 100.
 - **Keep blue active at weight 0 through the window.** Revisions past the
   retention cap are purged, and a purged revision can't be a rollback target.
@@ -195,8 +211,8 @@ For function apps, use the `az functionapp` form of the same commands.
 Give one plan in the `azure-propose-only` format, with these additions:
 
 1. The mechanism from the Pick the mechanism section, and why.
-2. The steps in the order under Order of a release. For a slot, the cut-over and
-   the window around it look like this:
+2. The steps in the order under Order of a release. For a slot, step 5 holds the
+   abort and the cut-over:
 
    ```bash
    # Abort, before the cut-over: cancel the pending preview
@@ -208,33 +224,38 @@ Give one plan in the `azure-propose-only` format, with these additions:
    az webapp deployment slot swap --resource-group <RG> --name <APP> \
      --slot <SLOT> --target-slot production --action swap \
      --subscription <SUB>
+   ```
 
+   For Container Apps, step 1 labels the new revision and step 5 moves the
+   weights:
+
+   ```bash
+   # Step 1: label the new revision as the candidate
+   az containerapp revision label add --resource-group <RG> \
+     --name <APP> --revision <NEW_REVISION> --label <CANDIDATE> \
+     --subscription <SUB>
+
+   # Step 5, cut-over: all traffic to the candidate
+   az containerapp ingress traffic set --resource-group <RG> \
+     --name <APP> --label-weight <LIVE>=0 <CANDIDATE>=100 \
+     --subscription <SUB>
+   ```
+
+3. Step 6 in its own block, apart from the cut-over: the observation window,
+   what to watch during it (error rate, latency, the health endpoint), and the
+   rollback. For a slot, the rollback is the same command as the cut-over, so it
+   never sits next to it:
+
+   ```bash
    # Rollback, only after the cut-over completed: swap the same slots
-   # back. It runs the full warm-up again.
+   # back. It runs the full warm-up again, so it takes minutes.
    az webapp deployment slot swap --resource-group <RG> --name <APP> \
      --slot <SLOT> --target-slot production --action swap \
      --subscription <SUB>
    ```
 
-   For Container Apps, label both revisions first; the cut-over and its rollback
-   are both weight changes:
+   For Container Apps: `--label-weight <LIVE>=100 <CANDIDATE>=0`.
 
-   ```bash
-   az containerapp revision label add --resource-group <RG> \
-     --name <APP> --revision <BLUE_REVISION> --label blue \
-     --subscription <SUB>
-
-   # Rollback: all traffic back to blue
-   az containerapp ingress traffic set --resource-group <RG> \
-     --name <APP> --label-weight blue=100 green=0 --subscription <SUB>
-
-   # Cut-over: all traffic to green
-   az containerapp ingress traffic set --resource-group <RG> \
-     --name <APP> --label-weight blue=0 green=100 --subscription <SUB>
-   ```
-
-3. The observation window and what to watch during it: error rate, latency and
-   the health endpoint.
 4. The full sticky list as an IaC snippet: every name `slotConfigNames` returns
    now, plus any the release adds. For Bicep:
 
