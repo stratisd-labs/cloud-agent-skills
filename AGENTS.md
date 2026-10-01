@@ -75,7 +75,8 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Write a regex grader's pattern with no spaces and no `*`: use `\s` and
   `{0,n}`. Prettier wraps prose at spaces and escapes `*`, which breaks the
   pattern without an error. Don't start it with `#`, which markdownlint reads as
-  a heading; write `[#]`.
+  a heading; write `[#]`. Avoid `)[`, which it reads as a reversed link; use `.`
+  with the `s` flag instead of `[\s\S]`.
 - Check structure in a long answer with a regex grader, not an `llm` one. Judges
   miss content deep in answers of several thousand characters.
 - A case that lets the agent run commands grants `Bash(az:*)` only, so the guard
