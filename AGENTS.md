@@ -28,6 +28,9 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
 - Write deltas only. Never restate Learn; link to it instead.
 - Every entry has, in order: when to use it, the decision and why, gotchas, an
   IaC snippet, the cost impact, and a `Last verified: YYYY-MM-DD` line.
+- `Last verified` is the date every claim and flag in the file was last checked
+  against Learn. Live runs against a subscription are reported in the pull
+  request, not in this date.
 - Verify every `az` flag against the Learn MCP before writing it. Tag any flag
   you couldn't verify `# verify`.
 - Then run every read-only command the file lists through the Azure MCP or `az`,

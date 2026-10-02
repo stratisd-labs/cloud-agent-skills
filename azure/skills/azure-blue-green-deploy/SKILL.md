@@ -45,11 +45,18 @@ the plan format comes from `azure-propose-only`.
 - **Functions on Consumption, Premium or Dedicated**: a slot, then swap.
   Consumption has one staging slot only. A Functions swap isn't zero-downtime:
   running functions can be stopped, and scaled apps can lose capacity. Never
-  promise zero downtime; when it's a requirement, propose Flex Consumption.
+  promise zero downtime. When it's a requirement, a swap can't meet it: flag a
+  blocker. Moving to Flex Consumption is a separate decision, not a release
+  step.
 - **Functions on Flex Consumption**: no slots. Rolling updates are the built-in
   option and aren't blue-green; two apps behind a gateway are.
-- **Container Apps**, and Functions hosted on Container Apps: multiple revision
-  mode, labels and traffic weights. Deployment slots don't apply there.
+- **Container Apps**, and Functions hosted on Container Apps: labels and traffic
+  weights; deployment slots don't apply. Branch on `activeRevisionsMode` first:
+  - `Single`: switch to multiple revision mode before deploying green. The new
+    revision would replace the old one, leaving nothing to roll back to.
+  - `Multiple`: proceed.
+  - `Labels` (deployment labels, in preview): stop. It was set on purpose; never
+    switch it. Flag a blocker for the human.
 - **Several resources that change together**: two stacks behind Front Door or
   Traffic Manager.
 
@@ -98,11 +105,12 @@ Every plan follows this order. It is the delta on top of the
   `slotConfigNames` returns now in all three lists, mounted storage included,
   plus the new ones. `az webapp config appsettings set --slot-settings` adds to
   the list instead.
+- **Check `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS`.** At `0` on
+  every slot, IP restrictions, Always On, CORS and the protocol settings swap
+  too. Read it from IaC; if it may have been set in the portal, put the filtered
+  read in the plan for the human, since the guard blocks `appsettings list`.
 - **Give the slot its own identity, with least privilege in production.**
   Managed identities, VNet integration and IP restrictions stay with the slot.
-  IP restrictions swap after all when
-  `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS` is `0` on every slot,
-  and so do Always On, CORS and the protocol settings; look for it in IaC.
   Sharing production's identity hands an unverified build production's data
   access, and hides a missing sticky setting. A staging-only identity breaks the
   swap instead: every swap restarts the slot with production's settings and
@@ -152,14 +160,15 @@ Every plan follows this order. It is the delta on top of the
 
 ### Container Apps revisions
 
-- **Switch to multiple revision mode before deploying green.** In single
-  revision mode the new revision replaces the old one, leaving nothing to roll
-  back to. An app in `Labels` mode (deployment labels, in preview) was put there
-  on purpose: never switch it; flag it as a blocker for the human.
 - **Pin traffic to the current revision, and label it, before deploying green.**
   With a `latestRevision: true` entry, the deploy itself becomes the cut-over.
   On a first release the live revision usually has no label, and
   `--label-weight` fails on a label that doesn't exist.
+- **When IaC declares the traffic block, pin and label there.** Many templates
+  declare `latestRevision: true`, so a pipeline that applies one resets an `az`
+  pin and turns the deploy into the cut-over. Change the template's traffic
+  entries to the live revision and its label, and every later weight change too.
+  The `az` commands in the Output section are for apps IaC doesn't manage.
 - **Read which label is live before planning; never assume `blue`.** After each
   release the roles swap, so a plan that hardcodes `blue` as the old version
   rolls the second release forward instead of back. Read the live label from
@@ -251,7 +260,8 @@ Give one plan in the `azure-propose-only` format, with these additions:
    For Container Apps, step 1 labels the new revision and step 5 moves the
    weights. There's no preview, so the abort is to leave `<CANDIDATE>` at weight
    0; nothing runs. When the live revision has no label, or traffic has a
-   `latestRevision: true` entry, pin and label it before step 1:
+   `latestRevision: true` entry, pin and label it before step 1. If IaC declares
+   the traffic block, do it there instead; otherwise:
 
    ```bash
    # Before step 1: pin all traffic to the live revision, then label it
@@ -305,11 +315,12 @@ Give one plan in the `azure-propose-only` format, with these additions:
 
 Flag any of these as a blocker, not a note: an environment-specific setting that
 isn't sticky, a sticky list that drops existing names, a breaking migration with
-no expand half, a traffic entry with `latestRevision: true`, a container app in
-`Labels` mode, a slot on Flex Consumption, and a slot cut-over with no abort
-command above it.
+no expand half, a `latestRevision: true` entry not pinned before step 1, an `az`
+pin on traffic that IaC declares, a container app in `Labels` mode, a
+zero-downtime requirement on a Functions swap, a slot on Flex Consumption, and a
+slot cut-over with no abort command above it.
 
-Last verified: 2026-10-01
+Last verified: 2026-10-02
 
 [slots]: https://learn.microsoft.com/azure/app-service/deploy-staging-slots
 [func-slots]:
