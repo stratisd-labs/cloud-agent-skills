@@ -43,7 +43,9 @@ the plan format comes from `azure-propose-only`.
 
 - **App Service, Standard tier or above**: a slot, then swap with preview.
 - **Functions on Consumption, Premium or Dedicated**: a slot, then swap.
-  Consumption has one staging slot only.
+  Consumption has one staging slot only. A Functions swap isn't zero-downtime:
+  running functions can be stopped, and scaled apps can lose capacity. Never
+  promise zero downtime; when it's a requirement, propose Flex Consumption.
 - **Functions on Flex Consumption**: no slots. Rolling updates are the built-in
   option and aren't blue-green; two apps behind a gateway are.
 - **Container Apps**, and Functions hosted on Container Apps: multiple revision
@@ -93,10 +95,14 @@ Every plan follows this order. It is the delta on top of the
 - **Write the full sticky list in IaC.** A PUT to `slotConfigNames` (Bicep, ARM,
   `az rest`, `az resource`) replaces the whole list, so one that names only the
   new setting makes every other sticky setting swappable again. List the names
-  `slotConfigNames` returns now, plus the new ones.
-  `az webapp config appsettings set --slot-settings` adds to the list instead.
+  `slotConfigNames` returns now in all three lists, mounted storage included,
+  plus the new ones. `az webapp config appsettings set --slot-settings` adds to
+  the list instead.
 - **Give the slot its own identity, with least privilege in production.**
   Managed identities, VNet integration and IP restrictions stay with the slot.
+  IP restrictions swap after all when
+  `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS` is `0` on every slot,
+  and so do Always On, CORS and the protocol settings; look for it in IaC.
   Sharing production's identity hands an unverified build production's data
   access, and hides a missing sticky setting. A staging-only identity breaks the
   swap instead: every swap restarts the slot with production's settings and
@@ -110,7 +116,7 @@ Every plan follows this order. It is the delta on top of the
   cut-over isn't documented: test a swap on a non-production app first.
 - **On an App Service plan, slots share production's instances.** Load-testing
   the slot, or a build that crash-loops there, takes capacity from production;
-  load-test elsewhere. Consumption slots scale on their own.
+  load-test elsewhere.
 - **Set `WEBSITE_SWAP_WARMUP_PING_STATUSES` to `200`** and
   `WEBSITE_SWAP_WARMUP_PING_PATH` to the health endpoint, on both slots. By
   default any status, 500 included, counts as warmed up.
@@ -148,7 +154,8 @@ Every plan follows this order. It is the delta on top of the
 
 - **Switch to multiple revision mode before deploying green.** In single
   revision mode the new revision replaces the old one, leaving nothing to roll
-  back to.
+  back to. An app in `Labels` mode (deployment labels, in preview) was put there
+  on purpose: never switch it; flag it as a blocker for the human.
 - **Pin traffic to the current revision, and label it, before deploying green.**
   With a `latestRevision: true` entry, the deploy itself becomes the cut-over.
   On a first release the live revision usually has no label, and
@@ -281,8 +288,8 @@ Give one plan in the `azure-propose-only` format, with these additions:
 
    For Container Apps: `--label-weight <LIVE>=100 <CANDIDATE>=0`.
 
-4. The full sticky list as an IaC snippet: every name `slotConfigNames` returns
-   now, plus any the release adds. For Bicep:
+4. The full sticky list in the project's IaC: every name `slotConfigNames`
+   returns now, plus any the release adds. For Bicep:
 
    ```bicep
    resource sticky 'Microsoft.Web/sites/config@2023-12-01' = {
@@ -291,14 +298,16 @@ Give one plan in the `azure-propose-only` format, with these additions:
      properties: {
        appSettingNames: [ '<EXISTING_SETTING>', '<NEW_SETTING>' ]
        connectionStringNames: [ '<EXISTING_CONNECTION>' ]
+       azureStorageConfigNames: [ '<EXISTING_MOUNT>' ]
      }
    }
    ```
 
 Flag any of these as a blocker, not a note: an environment-specific setting that
 isn't sticky, a sticky list that drops existing names, a breaking migration with
-no expand half, a traffic entry with `latestRevision: true`, a slot on Flex
-Consumption, and a slot cut-over with no abort command above it.
+no expand half, a traffic entry with `latestRevision: true`, a container app in
+`Labels` mode, a slot on Flex Consumption, and a slot cut-over with no abort
+command above it.
 
 Last verified: 2026-10-01
 
