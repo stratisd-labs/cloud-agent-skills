@@ -1,0 +1,145 @@
+name: Claude review (PR)
+
+# Claude reviews a PR (into any branch) only on demand, never automatically.
+# Three ways to ask, through the GitHub account named by the CLAUDE_GITHUB_USER
+# variable (repo or org):
+#   - request a review from `<CLAUDE_GITHUB_USER>` (works on drafts too);
+#   - assign the PR to `<CLAUDE_GITHUB_USER>`;
+#   - comment `@<CLAUDE_GITHUB_USER> review` on the PR.
+# All three run this workflow with the review rules below; any other
+# `@<CLAUDE_GITHUB_USER>` mention is handled by claude.yml. Without the
+# variable, this workflow never runs. Re-request the review, or comment again,
+# for a fresh pass after new pushes.
+# The result is a real GitHub review, inline comments plus a submitted review,
+# on the PR head.
+# No `track_progress`: that switches the action to its mention mode, which
+# feeds Claude the whole comment history and its own reply-in-one-comment
+# instructions, so it summarized earlier reviews instead of reading the diff.
+# With only `prompt`, Claude gets this prompt and nothing else.
+# Same setup as claude.yml: the Claude GitHub App plus ANTHROPIC_API_KEY or
+# CLAUDE_CODE_OAUTH_TOKEN.
+
+on:
+  pull_request:
+    types: [review_requested, assigned]
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    name: Claude review
+    # Fork PRs get no secrets on `pull_request`; on `issue_comment` only
+    # members and collaborators can ask, and the "Resolve PR" step refuses fork
+    # PRs. The CLAUDE_GITHUB_USER guard matters: unset, it would equal a
+    # missing login and the mention would be `@ review`.
+    if: >-
+      vars.CLAUDE_GITHUB_USER != '' && (
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          (github.event.requested_reviewer.login == vars.CLAUDE_GITHUB_USER ||
+            github.event.assignee.login == vars.CLAUDE_GITHUB_USER)) ||
+        (github.event_name == 'issue_comment' && github.event.issue.pull_request
+      &&
+          contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'),
+      github.event.comment.author_association) &&
+          contains(github.event.comment.body, format('@{0} review',
+      vars.CLAUDE_GITHUB_USER))))
+    # Job-level, not workflow-level: a run whose `if` is false must not join
+    # the group, or it cancels (or replaces in the queue) the run that does the
+    # work. Keyed by PR number: on `issue_comment` github.ref is the default
+    # branch for every PR.
+    concurrency:
+      group:
+        ${{ github.workflow }}-${{ github.event.pull_request.number ||
+        github.event.issue.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    env:
+      PR_NUMBER:
+        ${{ github.event.pull_request.number || github.event.issue.number }}
+    steps:
+      # `issue_comment` carries no head or base refs, so look them up for both
+      # events alike.
+      - name: Resolve PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
+            --json baseRefName,headRefOid,isCrossRepository)
+          if [ "$(jq -r .isCrossRepository <<<"$pr")" = true ]; then
+            echo "::error::Fork PRs are not reviewed: their checkout would run with this repo's secrets."
+            exit 1
+          fi
+          echo "base=$(jq -r .baseRefName <<<"$pr")" >> "$GITHUB_OUTPUT"
+          echo "head=$(jq -r .headRefOid <<<"$pr")" >> "$GITHUB_OUTPUT"
+
+      # The PR head, with full history so `git diff origin/<base>...HEAD` works.
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.pr.outputs.head }}
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.CLAUDE_GITHUB_PAT }}
+          # Post inline comments as they are made, not buffered and filtered
+          # after the run.
+          classify_inline_comments: false
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ env.PR_NUMBER }}
+            BASE BRANCH: ${{ steps.pr.outputs.base }}
+
+            Review this pull request. The working tree is the PR head. Start from the full change set —
+            `git diff origin/${{ steps.pr.outputs.base }}...HEAD` (or `gh pr diff ${{ env.PR_NUMBER }}`) — and
+            read the changed files in full where the diff alone is not enough to judge them. Review the
+            code as it is now; do not summarise or repeat earlier reviews or comments on the PR.
+
+            Read AGENTS.md and ARCHITECTURE.md first. If the diff adds or changes a skill, also read
+            .claude/skills/create-skill/SKILL.md and the skill's template.
+            Judge the diff by those rules, in this order:
+              1. Hard rules and safety: no client names, tenant or subscription IDs, resource names, IPs
+                 or incident details anywhere, only placeholders such as `<SUB>`, `<RG>`, `<APP>`; every
+                 skill that touches cloud state stays propose-only and never tells the agent to run a
+                 mutating command; the guard hook only denies, never answers `allow`, uses Node
+                 built-ins only, and keeps its rules in the policy JSON, not the script.
+              2. Correctness: Azure claims, `az` commands and flags that are wrong or out of date
+                 (check learn.microsoft.com when in doubt; an unverified flag must carry `# verify`);
+                 the guard policy and the propose-only skill's "What counts as read-only" section
+                 changed together and agreeing; a test case in tests/ for every command allowed or
+                 denied on purpose; bugs in hook or test code.
+              3. Repo rules: skill names and descriptions, reference files as deltas over Learn with
+                 every entry in the prescribed order and a `Last verified` line, a trap kept in one
+                 place, no same-file heading links; the versioning rule (plugin.json bump and
+                 CHANGELOG.md entry for a change inside a plugin folder, except evals-only changes or
+                 an `Unreleased` top entry); every version pinned in exactly one place.
+              4. Evals: a skill change that alters behaviour adds or updates a case that would fail
+                 without it; case names, counts, outcome graders, negative cases, regex graders
+                 written as AGENTS.md requires, Bash cases granting `Bash(az:*)` only.
+
+            Only report what you are confident about and can point to in the diff; skip what Prettier,
+            markdownlint, commitlint and `pnpm test` already enforce. Do not restate the PR description.
+
+            Post each finding as an inline comment on the exact changed line with
+            `mcp__github_inline_comment__create_inline_comment`, prefixed with its severity
+            (blocking / suggestion / nit).
+
+            Finish by submitting the review — this is required, a plain PR comment does not count:
+              - any blocking finding: `gh pr review ${{ env.PR_NUMBER }} --request-changes --body "<summary>"`;
+              - otherwise:            `gh pr review ${{ env.PR_NUMBER }} --approve --body "<summary>"`.
+            The summary is short: a verdict and the count of findings per severity, or one line saying
+            nothing was worth raising. Always approve or request changes — never submit a plain comment review.
+          claude_args: |
+            --max-turns 80
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr review *),Bash(gh pr diff *),Bash(gh pr view *),Bash(git diff *),Bash(git log *),Bash(git show *),WebFetch(domain:learn.microsoft.com)"
+            --disallowedTools "Bash(gh pr review * --comment*)"
