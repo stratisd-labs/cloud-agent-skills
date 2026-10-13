@@ -133,7 +133,7 @@ Every plan follows this order. It is the delta on top of the
 - **With App Service authentication on in either slot, plan a direct swap.**
   Swap with preview isn't available then; rely on the warm-up settings above.
 - **This repo's rule: no auto swap into production.** It removes the human's
-  check in step 2.
+  check in step 4, the stop before the cut-over.
 - **Schedule the cut-over outside batch windows.** The last phase recycles the
   old production workers and drops long-running requests and running functions.
 - **Keep a slot's non-HTTP triggers away from production.** Queue, Service Bus,
