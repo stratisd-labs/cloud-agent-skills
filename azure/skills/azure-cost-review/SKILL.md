@@ -91,11 +91,16 @@ Why these numbers:
 
 ## Gotchas
 
-- **Pull spend with a GET, not the Cost Management query API.** That API is a
-  POST, which this plugin's hook denies, and `az costmanagement` has no query
-  command. Use `az consumption usage list`. If it errors or comes back empty, as
-  it can on CSP or a new subscription, ask the human for a Cost analysis export
-  grouped by resource and meter, and list it as a blocker.
+- **Pull spend with `az consumption usage list`, a GET.** The Cost Management
+  Query and Cost Details APIs are POSTs, which this plugin's hook denies through
+  `az rest`, and the `costmanagement` extension only manages exports. If some
+  `az costmanagement query` command is available anyway, don't use it: the hook
+  passes the verb `query`, but it calls a POST API. Learn puts the Usage Details
+  API behind `az consumption` in maintenance mode, due for deprecation. If it
+  errors or comes back empty, as it can on CSP or a new subscription, run
+  `az costmanagement export list` to find a scheduled export and ask the human
+  for its latest file, or for a Cost analysis export grouped by resource and
+  meter. List the missing spend as a blocker.
 - **Never count today, and treat the open month as an estimate.** Cost data
   lands 8 to 24 hours late, 72 on pay-as-you-go. For "why did costs jump",
   compare two closed windows of the same length, and check whether a reservation
@@ -164,6 +169,9 @@ az account show --query '{sub: id, name: name, user: user.name}'
 az consumption usage list --subscription <SUB> \
   --start-date <START> --end-date <END> --include-meter-details \
   --query '[].{res: instanceName, cost: pretaxCost, meter: meterId}'
+
+# If that fails: scheduled cost exports the human can pull a file from
+az costmanagement export list --scope /subscriptions/<SUB>
 
 # Orphans: unattached disks, unassociated IPs, empty plans, idle NAT
 az disk list --subscription <SUB> \
