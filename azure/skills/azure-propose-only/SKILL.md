@@ -145,7 +145,10 @@ For each change the human asked for, give a plan with these parts, in order:
 2. **Discovery**: which checks ran and what they returned, or why a check was
    skipped. If checks can't run at all, such as with no CLI or no access, don't
    stop: give the plan anyway, and list what each skipped check would have
-   answered as a blocker for the human to clear.
+   answered as a blocker for the human to clear. Missing details, such as the
+   resource group, subscription or image, don't stop it either: never end on
+   questions instead of a plan. Write placeholders (`<RG>`, `<SUB>`) and list
+   each as a blocker. Use every name the human gave you as is.
 3. **Preview**: the what-if or `terraform plan` summary, with noise and `Ignore`
    results called out. For a change no preview covers, give each property's
    current value and its new value instead.
