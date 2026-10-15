@@ -6,6 +6,4 @@ runs: 3
 ---
 
 Our dev VM vm-evaltest-dev showed as running when I checked at 11:00, so it runs
-24/7. Its compute meter in the cost lines for the last 14 closed days shows 10
-hours on each weekday and 0 on weekends. How much would an auto-shutdown
-schedule save?
+24/7. How much would an auto-shutdown schedule save?

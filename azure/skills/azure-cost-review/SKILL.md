@@ -47,7 +47,8 @@ right-sizing before committing stops a reservation from locking in waste.
    priced from this, not from retail prices.
 2. **Orphans.** Resources that bill and serve nothing; see the Thresholds table.
 3. **Oversized.** SKUs or instance counts above what the metrics show.
-4. **Non-prod running 24/7.** VMs and plans in `dev` or `test` with no schedule.
+4. **Non-prod running 24/7.** VMs whose `environment` isn't `prod`, running
+   every hour with no schedule.
 5. **Log Analytics.** Ingestion by table, retention, table plan. Often the
    silent top line.
 6. **Commitments.** Reservations or a savings plan, only for the baseline left
