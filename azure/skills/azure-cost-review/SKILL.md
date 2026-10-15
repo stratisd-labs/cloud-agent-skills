@@ -61,16 +61,20 @@ Rank findings by monthly saving, then effort (small, medium, large), then risk
 A finding is waste only when it meets its threshold:
 
 - **Unattached managed disk**: `diskState` is `Unattached`, and
-  `lastOwnershipUpdateTime` is over 14 days ago.
+  `lastOwnershipUpdateTime` is over 14 days ago or, if it's empty because the
+  disk was never attached, `timeCreated` is.
 - **Unassociated public IP**: no `ipConfiguration` and no `natGateway`.
 - **Empty App Service plan**: `numberOfSites` is 0.
 - **Idle NAT gateway**: no subnet attached.
-- **Old snapshot**: over 30 days old, and its source disk is gone or has a newer
-  snapshot.
+- **Old snapshot**: over 30 days old, and its `source` is missing from
+  `az disk list` or has a newer snapshot. Group snapshots by `source` to find
+  the newest.
 - **Oversized VM or plan**: over at least 14 days, the P95 of hourly maximum CPU
   is at or below 35%, and peak memory use at or below 45%.
-- **Non-prod running 24/7**: `environment` isn't `prod`, and the VM ran every
-  hour of the period.
+- **Non-prod running 24/7**: `environment` isn't `prod`, and the VM's compute
+  meter in the step 1 spend lines shows 24 hours on every day of the period.
+  Whether it runs right now is one sample; an auto-shutdown VM looks running by
+  day.
 - **Log Analytics retention**: an Analytics table keeps data past 31 days, or 90
   with Sentinel, and nobody named a reason.
 - **Log Analytics commitment tier**: billable ingestion was 100 GB or more on
@@ -91,16 +95,17 @@ Why these numbers:
 
 ## Gotchas
 
-- **Pull spend with `az consumption usage list`, a GET.** The Cost Management
-  Query and Cost Details APIs are POSTs, which this plugin's hook denies through
-  `az rest`, and the `costmanagement` extension only manages exports. If some
-  `az costmanagement query` command is available anyway, don't use it: the hook
-  passes the verb `query`, but it calls a POST API. Learn puts the Usage Details
-  API behind `az consumption` in maintenance mode, due for deprecation. If it
-  errors or comes back empty, as it can on CSP or a new subscription, run
-  `az costmanagement export list` to find a scheduled export and ask the human
-  for its latest file, or for a Cost analysis export grouped by resource and
-  meter. List the missing spend as a blocker.
+- **Pull spend with `az consumption usage list`.** What a command does decides
+  whether it's read-only, not its HTTP method: `az monitor log-analytics query`
+  POSTs and only reads. The Cost Management Query API reads too, but no `az`
+  command wraps it today, since the `costmanagement` extension only manages
+  exports, and the hook denies every `az rest` POST because it can't read the
+  body. If your extension has a `costmanagement query` command, prefer it. Learn
+  puts the Usage Details API behind `az consumption` in maintenance mode, due
+  for deprecation. If it errors or comes back empty, as it can on CSP or a new
+  subscription, run `az costmanagement export list` to find a scheduled export
+  and ask the human for its latest file, or for a Cost analysis export grouped
+  by resource and meter. List the missing spend as a blocker.
 - **Never count today, and treat the open month as an estimate.** Cost data
   lands 8 to 24 hours late, 72 on pay-as-you-go. For "why did costs jump",
   compare two closed windows of the same length, and check whether a reservation
@@ -120,10 +125,12 @@ Why these numbers:
 - **Plan `az vm deallocate`, never `az vm stop`.** A stopped VM keeps billing
   compute. Deallocating also drops a dynamic public IP and the temp disk, so say
   so in the blast radius.
-- **A NAT gateway with low traffic isn't idle.** New virtual networks use
-  private subnets by default since 31 March 2026, so removing the gateway cuts
-  all outbound traffic, Windows activation and updates included. Only a NAT
-  gateway with no subnet is an orphan.
+- **A NAT gateway with low traffic isn't idle.** Removing it cuts outbound
+  access on a private subnet, Windows activation and updates included. Subnets
+  are private by default in the portal and with API versions released after 31
+  March 2026; older API versions and existing VNets keep the old default. On
+  those, egress moves to an unpredictable default outbound IP, which breaks
+  partner allow lists. Only a NAT gateway with no subnet is an orphan.
 - **Deleting a public IP releases the address for good.** Partners may allow
   list it. Ask who uses the address, and put the delete in Irreversible steps.
 - **Check unattached disks against Site Recovery.** Replica and seed disks look
@@ -168,7 +175,8 @@ az account show --query '{sub: id, name: name, user: user.name}'
 # Actual cost lines for a closed period, per resource and meter
 az consumption usage list --subscription <SUB> \
   --start-date <START> --end-date <END> --include-meter-details \
-  --query '[].{res: instanceName, cost: pretaxCost, meter: meterId}'
+  --query '[].{res: instanceName, cost: pretaxCost, meter: meterId,
+    qty: usageQuantity, day: usageStart}'
 
 # If that fails: scheduled cost exports the human can pull a file from
 az costmanagement export list --scope /subscriptions/<SUB>
@@ -176,7 +184,7 @@ az costmanagement export list --scope /subscriptions/<SUB>
 # Orphans: unattached disks, unassociated IPs, empty plans, idle NAT
 az disk list --subscription <SUB> \
   --query "[?diskState=='Unattached'].{name: name, gb: diskSizeGb,
-    sku: sku.name, since: lastOwnershipUpdateTime}"
+    sku: sku.name, since: lastOwnershipUpdateTime, created: timeCreated}"
 az network public-ip list --subscription <SUB> \
   --query '[?!ipConfiguration && !natGateway].{name: name, ip: ipAddress}'
 az appservice plan list --subscription <SUB> \
@@ -184,16 +192,18 @@ az appservice plan list --subscription <SUB> \
 az network nat gateway list --subscription <SUB> \
   --query '[?!subnets].name'
 az snapshot list --subscription <SUB> \
-  --query '[].{name: name, created: timeCreated, sku: sku.name}'
+  --query '[].{name: name, created: timeCreated, sku: sku.name,
+    source: creationData.sourceResourceId}'
 
 # Oversized: hourly peaks over 14 days (plans: CpuPercentage, MemoryPercentage)
+# Memory on a VM is free memory: peak use is 100 minus its Minimum
 az monitor metrics list --resource <VM_ID> \
   --metrics "Percentage CPU" "Available Memory Percentage" \
   --aggregation Maximum Minimum --interval 1h --offset 14d
 
-# Non-prod running now, with its environment tag
-az vm list --subscription <SUB> --show-details \
-  --query "[?powerState=='VM running'].{name: name,
+# Non-prod candidates; the 24/7 evidence is the hours in the spend lines
+az vm list --subscription <SUB> \
+  --query "[?tags.environment!='prod'].{name: name,
     env: tags.environment, size: hardwareProfile.vmSize}"
 
 # Log Analytics: workspace GUID, retention, cap; then billable GB by table
@@ -236,7 +246,7 @@ Flag these as blockers, not notes: no spend data for the period, a resize with
 less than 14 days of metrics, a commitment proposed before right-sizing, and a
 delete whose owner nobody has confirmed.
 
-Last verified: 2026-10-13
+Last verified: 2026-10-15
 
 [advisor-cost]:
   https://learn.microsoft.com/azure/advisor/advisor-cost-recommendations
