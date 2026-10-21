@@ -39,3 +39,12 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   mounted storage in the sticky list, apps in Labels mode left for the human, a
   pin made in IaC when IaC declares the traffic block, Functions swaps that
   aren't zero-downtime, and migrations that make a swap-back impossible.
+- `azure-cost-review` skill: a review order from spend to orphans, oversized
+  SKUs, non-prod running 24/7, Log Analytics and commitments, with thresholds
+  for each finding and a ranked plan priced from actual cost. Covers spend
+  pulled with `az consumption` while no `az` command wraps the Cost Management
+  Query API, cost jumps compared over closed windows with open data called an
+  estimate, Advisor savings priced at retail, metrics read over one hour by
+  default, apps stopped on a plan that still bills, NAT gateways on private
+  subnets, downgrades that drop a feature or data, and commitments that can't be
+  undone.
