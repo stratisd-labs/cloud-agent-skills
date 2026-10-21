@@ -238,7 +238,7 @@ Give, in order:
    were available, label it a retail estimate.
 3. **Checks**: which checks ran and what they returned, or why each was skipped.
 4. **Plan**: one plan in the `azure-propose-only` format, steps in rank order,
-   each with its saving and evidence. Deletes, downgrades from the table above,
+   each with its saving and evidence. Deletes, the downgrades listed in Gotchas,
    retention cuts and commitments go under Irreversible steps, after the
    checkpoint. For IaC-managed resources, the step is the IaC change.
 5. **Untagged spend**: its share of the total, pointing to
