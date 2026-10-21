@@ -45,7 +45,8 @@ right-sizing before committing stops a reservation from locking in waste.
    resource) and a closed period: whole days, ending yesterday. Pull actual cost
    per resource and meter, and list the top 10 resources by cost. Savings are
    priced from this, not from retail prices.
-2. **Orphans.** Resources that bill and serve nothing; see the Thresholds section.
+2. **Orphans.** Resources that bill and serve nothing; see the Thresholds
+   section.
 3. **Oversized.** SKUs or instance counts above what the metrics show.
 4. **Non-prod running 24/7.** VMs whose `environment` isn't `prod`, running
    every hour with no schedule.

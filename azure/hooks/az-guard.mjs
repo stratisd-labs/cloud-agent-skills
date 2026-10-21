@@ -243,6 +243,20 @@ function flagValue(args, names) {
   return undefined;
 }
 
+// The first argument that is one of `flags`, with or without `=value`. A
+// shortened long flag, such as `--refr` for `--refresh`, counts too, because
+// az's argument parser accepts unambiguous prefixes.
+function deniedFlag(args, flags) {
+  return args.find((arg) => {
+    const name = arg.split("=")[0];
+    return flags.some(
+      (f) =>
+        name === f ||
+        (f.startsWith("--") && name.length > 2 && f.startsWith(name))
+    );
+  });
+}
+
 function evaluateAzRest(args) {
   const rules = policy.azRest;
   const method = (flagValue(args, ["--method", "-m"]) ?? "get").toLowerCase();
@@ -284,6 +298,10 @@ function evaluateAz(args) {
   ) {
     return deny(`\`az ${joined}\` can print a secret. ${PLAN}`);
   }
+  const flag = deniedFlag(args, rules.deniedFlags[joined] ?? []);
+  if (flag) {
+    return deny(`\`az ${joined} ${flag}\` changes Azure state. ${PLAN}`);
+  }
   return ALLOW;
 }
 
@@ -308,9 +326,7 @@ function evaluateTerraform(name, args) {
   if (!known) {
     return deny(`\`${name} ${two || first}\` changes state. ${PLAN}`);
   }
-  const flag = rest.find((a) =>
-    rules.deniedFlags.some((f) => a === f || a.startsWith(`${f}=`))
-  );
+  const flag = deniedFlag(rest, rules.deniedFlags);
   if (flag) {
     return deny(
       `\`${name} ${known} ${flag}\` changes state or prints secrets. ${PLAN}`

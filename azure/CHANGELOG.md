@@ -21,7 +21,9 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 - `PreToolUse` hook (`hooks/`): denies Bash commands that change Azure or print
   secrets, across `az`, `az rest`, `azd`, Terraform and Az PowerShell, and
   points the agent to `azure-propose-only`. It fails closed on commands that
-  mention `az` in a form it can't parse. A guard, not a sandbox.
+  mention `az` in a form it can't parse. It also denies flags the policy names
+  on a read command, such as `az advisor recommendation list --refresh`, which
+  regenerates Advisor's recommendations. A guard, not a sandbox.
 - `azure-resource-naming` skill: a naming convention on top of the Cloud
   Adoption Framework, region codes, deployment slot naming, and length and
   name-reuse traps.
