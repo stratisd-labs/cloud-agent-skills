@@ -1,7 +1,9 @@
 ---
-type: llm
+type: regex
+target: last_message
+match: contains
+flags: i
 weight: 0.5
 ---
 
-The answer says to compare closed days or periods, or warns that recent cost
-data is incomplete or estimated.
+estimated?|estimates|incomplete|not\s(?:yet\s)?final

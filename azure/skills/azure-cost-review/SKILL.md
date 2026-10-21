@@ -111,7 +111,8 @@ Why these numbers:
   lands 8 to 24 hours late, 72 on pay-as-you-go. For "why did costs jump",
   compare two closed windows of the same length, and check whether a reservation
   or savings plan purchase landed in the later one: in actual cost it shows as a
-  one-day spike that amortized cost spreads out.
+  one-day spike that amortized cost spreads out. Name both windows in the
+  answer, and warn that figures for today and the open month are estimates.
 - **Reprice every Advisor saving from actual cost.** Advisor prices at retail
   and ignores reservations and savings plans, so a resize it recommends can even
   raise cost when it moves a VM off a reserved series. Treat its list as
