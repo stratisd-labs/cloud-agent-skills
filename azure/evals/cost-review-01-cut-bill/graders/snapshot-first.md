@@ -1,6 +1,8 @@
 ---
-type: llm
+type: regex
+target: last_message
+match: contains
+flags: s
 ---
 
-Before deleting the unattached disk, the plan takes a snapshot of it, or
-explicitly checks that the disk isn't a Site Recovery replica.
+^(?:(?!az\sdisk\sdelete).){0,20000}az\ssnapshot\screate
