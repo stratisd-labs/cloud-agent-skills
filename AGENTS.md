@@ -131,7 +131,8 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
     `pnpm/action-setup`.
   - Node: `.nvmrc`. Workflows read it with `node-version-file`.
   - GitHub Actions: the `uses:` lines in `.github/workflows/`.
-  - MCP servers shipped to users: the plugin's `.mcp.json`.
+  - MCP servers shipped to users: the plugin's `.mcp.json`. Pin an exact stable
+    release, never `@latest`: npm's `latest` tag can point at a beta.
 - Renovate (`renovate.json`) tracks all of these. Its Dependency Dashboard issue
   lists every dependency and any pending update.
 - A Renovate PR that touches a plugin folder still needs the versioning rule

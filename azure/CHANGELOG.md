@@ -10,9 +10,9 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 ### Added
 
 - Plugin manifest (`.claude-plugin/plugin.json`).
-- MCP configuration (`.mcp.json`): the Azure MCP server pinned to
-  `@azure/mcp@2.0.5` and started with `--read-only`, and the Microsoft Learn MCP
-  server.
+- MCP configuration (`.mcp.json`): the Azure MCP server (`@azure/mcp`), pinned
+  to an exact stable release and started with `--read-only`, and the Microsoft
+  Learn MCP server.
 - `azure-propose-only` skill: the read-only rule, the plan format every
   `azure-*` skill shares, commands that look read-only but aren't, and the steps
   that can't be rolled back. When discovery can't run, or the resource group,
