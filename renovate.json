@@ -6,7 +6,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "npm packages pinned in MCP server args, e.g. @azure/mcp@2.0.5",
+      "description": "npm packages pinned in MCP server args, as <package>@<x.y.z>",
       "managerFilePatterns": ["/(^|/)\\.mcp\\.json$/"],
       "matchStrings": [
         "\"(?<depName>(?:@[a-z0-9-]+/)?[a-z0-9.-]+)@(?<currentValue>\\d+\\.\\d+\\.\\d+[^\"]*)\""
