@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "events": [
+      {
+        "trackingId": "EV00-TST",
+        "title": "App Service - West Europe - Degraded availability",
+        "summary": "Starting at 13:52 UTC, a subset of customers using App Service in West Europe may experience HTTP 503 errors. Engineers are investigating.",
+        "eventType": "ServiceIssue",
+        "status": "Active",
+        "startTime": "2026-10-20T13:52:00Z",
+        "endTime": null,
+        "impactedServices": ["App Service"],
+        "impactedRegions": ["West Europe"]
+      }
+    ]
+  }
+}

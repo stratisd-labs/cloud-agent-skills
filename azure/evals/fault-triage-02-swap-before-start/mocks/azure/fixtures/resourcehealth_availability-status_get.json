@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "statuses": [
+      {
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-app/providers/Microsoft.Web/sites/app-evaltest-web/providers/Microsoft.ResourceHealth/availabilityStatuses/current",
+        "availabilityState": "Available",
+        "summary": "There aren't any known Azure platform problems affecting this app.",
+        "reasonType": null,
+        "context": null,
+        "occuredTime": "2026-10-20T08:00:00Z"
+      }
+    ]
+  }
+}

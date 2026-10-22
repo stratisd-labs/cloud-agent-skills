@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "statuses": [
+      {
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-app/providers/Microsoft.Web/sites/app-evaltest-api/providers/Microsoft.ResourceHealth/availabilityStatuses/current",
+        "availabilityState": "Degraded",
+        "summary": "We're investigating a platform issue that may affect the availability of this app.",
+        "reasonType": "Unplanned",
+        "context": "Platform Initiated",
+        "occuredTime": "2026-10-20T13:58:00Z"
+      }
+    ]
+  }
+}
