@@ -28,6 +28,8 @@ const allowed = [
   "az group exists --name <RG>",
   "az graph query -q 'Resources | take 5'",
   "az keyvault secret list --vault-name <KV>",
+  "az advisor recommendation list --category Cost",
+  "az advisor recommendation list -g <RG> --query '[].impactedValue'",
   // Previews, help and local commands
   "az deployment group what-if -g <RG> --template-file main.bicep",
   "az group delete --help",
@@ -73,6 +75,10 @@ const denied = [
   "az account set --subscription <SUB>",
   "az login",
   "az keyvault purge --name <KV>",
+  "az advisor recommendation list --refresh",
+  "az advisor recommendation list --category Cost -r",
+  "az advisor recommendation list --refr",
+  "az advisor recommendation list --refresh=true",
   // Secrets
   "az storage account keys list -g <RG> -n <ST>",
   "az keyvault secret show --vault-name <KV> --name <S>",

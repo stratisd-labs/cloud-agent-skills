@@ -61,6 +61,8 @@ Never run these, however read-only they look. Put them in the plan:
   such as `listKeys`, can return a secret.
 - `az account set`: it switches the human's default subscription for every later
   command, theirs included.
+- `az advisor recommendation list --refresh`: it makes Advisor generate new
+  recommendations, which is a write. Without the flag, the list only reads.
 
 Any other command with a verb such as `create`, `update`, `set`, `delete`,
 `add`, `remove`, `start`, `stop`, `restart`, `swap`, `tag`, `assign`,

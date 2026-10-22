@@ -23,7 +23,10 @@
       "keyvault secret list",
       "keyvault key list",
       "keyvault certificate list"
-    ]
+    ],
+    "deniedFlags": {
+      "advisor recommendation list": ["--refresh", "-r"]
+    }
   },
   "azRest": {
     "readMethods": ["get", "head"],
