@@ -90,6 +90,21 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   macOS. Run it as a non-root user; as root the sandbox can't start a shell.
 - `--allow-tools` grants Bash to every case in the run, whatever a case's own
   `allowed_tools` says. Write cases that pass with or without it.
+- Mock the Azure MCP for a case whose right answer depends on what discovery
+  finds. Never pass `--allow-real-servers` or `--mocks off`: they start the real
+  server with your `az` login.
+- Mocks live in `<cloud>/evals/mocks/<server>/` for the whole suite and in
+  `<cloud>/evals/<case>/mocks/<server>/` for one case, which wins. Name each
+  file after the tool, `<tool>.md`. Put the response in `fixtures/<tool>.json`
+  and load it with `{{file:fixtures/<tool>.json}}`; Prettier flattens JSON
+  written in Markdown.
+- The suite mocks answer each discovery tool with an error, so a case without
+  its own data sees the check as not run. Mocked tools need no grant in
+  `allowed_tools`.
+- Mock data follows the hard rules: placeholders only, and all-zero GUIDs such
+  as `00000000-0000-0000-0000-0000000000e1` for IDs.
+- After a version bump of a mocked server, run `pnpm mocks:tools` and commit
+  `_tools.json`. `pnpm test` fails when a mock names a tool it doesn't list.
 
 ## Versioning
 

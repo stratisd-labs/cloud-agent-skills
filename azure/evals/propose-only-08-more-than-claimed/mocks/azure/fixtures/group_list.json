@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "groups": [
+      {
+        "name": "rg-evaltest-archive",
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-archive",
+        "location": "westeurope"
+      },
+      {
+        "name": "rg-evaltest-app",
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-app",
+        "location": "westeurope"
+      }
+    ]
+  }
+}

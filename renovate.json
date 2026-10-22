@@ -22,6 +22,13 @@
       "prBodyNotes": [
         "This changes a plugin folder. Before merging, bump `version` in that plugin's `.claude-plugin/plugin.json` and add a `CHANGELOG.md` entry."
       ]
+    },
+    {
+      "description": "Eval mocks copy the Azure MCP tool list: refresh it on a bump",
+      "matchPackageNames": ["@azure/mcp"],
+      "prBodyNotes": [
+        "The eval suite mocks this server. Run `pnpm mocks:tools` and commit the new `evals/mocks/azure/_tools.json`, then run `pnpm test`: it fails if a mock names a tool this version no longer has. Rename or drop that mock, and re-run `pnpm eval` for its cases."
+      ]
     }
   ]
 }
