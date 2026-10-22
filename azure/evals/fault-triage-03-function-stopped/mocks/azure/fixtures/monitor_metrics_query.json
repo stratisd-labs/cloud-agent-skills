@@ -1,0 +1,34 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "metrics": [
+      {
+        "name": "FunctionExecutionCount",
+        "unit": "Count",
+        "timeSeries": [
+          {
+            "timeStamp": "2026-10-20T09:15:00Z",
+            "total": 212
+          },
+          {
+            "timeStamp": "2026-10-20T09:20:00Z",
+            "total": 198
+          },
+          {
+            "timeStamp": "2026-10-20T09:25:00Z",
+            "total": 64
+          },
+          {
+            "timeStamp": "2026-10-20T09:30:00Z",
+            "total": 0
+          },
+          {
+            "timeStamp": "2026-10-20T09:35:00Z",
+            "total": 0
+          }
+        ]
+      }
+    ]
+  }
+}

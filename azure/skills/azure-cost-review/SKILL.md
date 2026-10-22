@@ -118,10 +118,9 @@ Why these numbers:
   and ignores reservations and savings plans, so a resize it recommends can even
   raise cost when it moves a VM off a reserved series. Treat its list as
   candidates, then apply the thresholds above with your own metrics.
-- **`az monitor metrics list` reads one hour by default.** Its `--offset`
-  defaults to `1h` and `--interval` to one minute. Always pass
-  `--offset 14d --interval 1h` or explicit start and end times, or a busy VM
-  looks idle.
+- **Pass `--offset 14d --interval 1h` to every sizing metrics query.** Without a
+  window, `az monitor metrics list` reads the last hour. See [Azure Monitor
+  queries][monitor-queries].
 - **Stopping an App Service app saves nothing.** The plan bills per instance
   whether its apps run or not. Plan a scale-in, a smaller SKU or deleting the
   plan; for non-prod, recreate it from IaC when needed.
@@ -224,7 +223,8 @@ az advisor recommendation list --subscription <SUB> --category Cost \
   --query '[].{res: impactedValue, problem: shortDescription.problem}'
 ```
 
-`--workspace` takes the workspace GUID, `customerId`, not its name.
+`--workspace` takes the workspace GUID, `customerId`; see [Azure Monitor
+queries][monitor-queries].
 
 ## Output
 
@@ -251,6 +251,7 @@ delete whose owner nobody has confirmed.
 
 Last verified: 2026-10-15
 
+[monitor-queries]: ../../reference/azure-monitor/queries.md
 [advisor-cost]:
   https://learn.microsoft.com/azure/advisor/advisor-cost-recommendations
 [cm-data]:

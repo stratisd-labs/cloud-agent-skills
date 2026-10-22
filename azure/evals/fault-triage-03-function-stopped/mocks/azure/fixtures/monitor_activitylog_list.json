@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "activityLogs": [
+      {
+        "eventTimestamp": "2026-10-20T09:24:00Z",
+        "operationName": "Microsoft.Web/sites/slots/write",
+        "operationDisplayName": "Create or Update Web App Slot",
+        "status": "Succeeded",
+        "caller": "user-evaltest",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-func/providers/Microsoft.Web/sites/func-evaltest-orders-processor-prod-weu/slots/preprod"
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "metrics": [
+      {
+        "name": "Http5xx",
+        "unit": "Count",
+        "timeSeries": [
+          {
+            "timeStamp": "2026-10-20T13:45:00Z",
+            "total": 0
+          },
+          {
+            "timeStamp": "2026-10-20T13:50:00Z",
+            "total": 2
+          },
+          {
+            "timeStamp": "2026-10-20T13:55:00Z",
+            "total": 143
+          },
+          {
+            "timeStamp": "2026-10-20T14:00:00Z",
+            "total": 412
+          },
+          {
+            "timeStamp": "2026-10-20T14:05:00Z",
+            "total": 398
+          }
+        ]
+      }
+    ]
+  }
+}

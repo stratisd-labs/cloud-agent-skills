@@ -1,0 +1,24 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "activityLogs": [
+      {
+        "eventTimestamp": "2026-10-20T13:57:00Z",
+        "operationName": "Microsoft.Web/sites/slots/slotsswap/action",
+        "operationDisplayName": "Swap Web App Slots",
+        "status": "Succeeded",
+        "caller": "sp-evaltest-deploy",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-app/providers/Microsoft.Web/sites/app-evaltest-web/slots/preprod"
+      },
+      {
+        "eventTimestamp": "2026-10-20T13:41:00Z",
+        "operationName": "Microsoft.Web/sites/slots/write",
+        "operationDisplayName": "Create or Update Web App Slot",
+        "status": "Succeeded",
+        "caller": "sp-evaltest-deploy",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-app/providers/Microsoft.Web/sites/app-evaltest-web/slots/preprod"
+      }
+    ]
+  }
+}

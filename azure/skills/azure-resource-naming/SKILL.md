@@ -103,11 +103,9 @@ before proposing, and shorten the workload, never the other components.
 | Container app   | 32    | `ca-…-prod-weu`: 20              |
 | Function app    | 32\*  | `func-…-prod-weu`: 18            |
 
-\* The function app name allows 60 characters, but the host ID truncates it
-to 32. Two apps sharing a storage account whose names match in the first 32
-characters collide, and this pattern puts `<env>` last, so `prod` and `stg`
-twins collide first. Keep function app names at 32 characters or fewer, or give
-each app its own storage account.
+\* The function app name allows 60 characters, but keep it to 32: longer names
+can collide on host ID, and this pattern's `prod` and `stg` twins collide first.
+See [host ID collisions][hostid].
 
 A Windows VM's resource name can take 64 characters, but its host name
 (`computerName`) takes only 15. Don't reuse the resource name as the host name;
@@ -162,6 +160,7 @@ Flag any length overflow or taken name as a blocker, not a note.
 
 Last verified: 2026-09-27
 
+[hostid]: ../../reference/azure-functions/configuration.md
 [caf-naming]:
   https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
 [caf-abbr]:
