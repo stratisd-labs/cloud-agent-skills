@@ -1,0 +1,32 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "resources": [
+      {
+        "name": "stevaltestarchive",
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-archive/providers/Microsoft.Storage/storageAccounts/stevaltestarchive",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "westeurope"
+      },
+      {
+        "name": "kv-evaltest-archive",
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-archive/providers/Microsoft.KeyVault/vaults/kv-evaltest-archive",
+        "type": "Microsoft.KeyVault/vaults",
+        "location": "westeurope"
+      },
+      {
+        "name": "sql-evaltest-archive",
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-archive/providers/Microsoft.Sql/servers/sql-evaltest-archive",
+        "type": "Microsoft.Sql/servers",
+        "location": "westeurope"
+      },
+      {
+        "name": "sql-evaltest-archive/sqldb-evaltest-archive",
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-archive/providers/Microsoft.Sql/servers/sql-evaltest-archive/databases/sqldb-evaltest-archive",
+        "type": "Microsoft.Sql/servers/databases",
+        "location": "westeurope"
+      }
+    ]
+  }
+}

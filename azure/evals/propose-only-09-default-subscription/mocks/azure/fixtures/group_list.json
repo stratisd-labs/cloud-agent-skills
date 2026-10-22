@@ -1,0 +1,13 @@
+{
+  "status": 200,
+  "message": "Success",
+  "results": {
+    "groups": [
+      {
+        "name": "rg-evaltest-scratch",
+        "id": "/subscriptions/00000000-0000-0000-0000-0000000000e1/resourceGroups/rg-evaltest-scratch",
+        "location": "westeurope"
+      }
+    ]
+  }
+}

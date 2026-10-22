@@ -68,6 +68,54 @@ for (const plugin of plugins) {
       (g) => g.input_match?.includes(skill) && g.max === "0"
     );
 
+  // MCP mocks: suite-wide in evals/mocks/<server>/, or per case in
+  // evals/<case>/mocks/<server>/. Each <tool>.md must name a tool the pinned
+  // server still has, per the saved tools/list in evals/mocks/<server>/
+  // _tools.json; `pnpm mocks:tools` refreshes that file after a version bump.
+  const mcpServers = Object.keys(
+    JSON.parse(readFileSync(join(root, plugin, ".mcp.json"), "utf8"))
+      .mcpServers ?? {}
+  );
+  const mockDirs = [
+    join(evalDir, "mocks"),
+    ...cases.map((c) => join(evalDir, c.name, "mocks"))
+  ].filter(existsSync);
+
+  for (const mockDir of mockDirs) {
+    const where = mockDir.slice(root.length + 1);
+    test(`${plugin}: mocks in ${where} match the pinned servers`, () => {
+      for (const server of dirs(mockDir)) {
+        assert.ok(
+          mcpServers.includes(server),
+          `${where}/${server}: no server named ${server} in .mcp.json`
+        );
+        const saved = join(evalDir, "mocks", server, "_tools.json");
+        assert.ok(existsSync(saved), `missing ${saved}; run pnpm mocks:tools`);
+        const tools = new Set(
+          JSON.parse(readFileSync(saved, "utf8")).tools.map((t) => t.name)
+        );
+        const dir = join(mockDir, server);
+        for (const file of readdirSync(dir)) {
+          if (!file.endsWith(".md") || file.startsWith("_")) continue;
+          const tool = file.slice(0, -3);
+          assert.ok(
+            tools.has(tool),
+            `${where}/${server}/${file}: the pinned server has no tool ` +
+              `${tool}; run pnpm mocks:tools and rename or drop the mock`
+          );
+          const body = readFileSync(join(dir, file), "utf8");
+          for (const [, ref] of body.matchAll(/\{\{file:([^}]+)\}\}/g)) {
+            const fixture = join(dir, ref);
+            assert.ok(existsSync(fixture), `${where}/${server}: no ${ref}`);
+            if (ref.endsWith(".json")) {
+              JSON.parse(readFileSync(fixture, "utf8"));
+            }
+          }
+        }
+      }
+    });
+  }
+
   if (skills.length === 0) continue;
 
   test(`${plugin}: every case is named <skill>-NN-<what> or neg-NN-<what>`, () => {
