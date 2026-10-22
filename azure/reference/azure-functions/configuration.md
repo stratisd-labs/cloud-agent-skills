@@ -51,6 +51,20 @@ resource settings 'Microsoft.Web/sites/config@2023-12-01' = {
     // ...the app's other settings: this resource replaces the whole set
   }
 }
+
+// Sticky, so a swap leaves each slot's host ID where it is. This also
+// replaces the whole list: see "Write the full sticky list in IaC" in
+// azure-blue-green-deploy.
+resource sticky 'Microsoft.Web/sites/config@2023-12-01' = {
+  parent: functionApp
+  name: 'slotConfigNames'
+  properties: {
+    appSettingNames: [
+      'AzureFunctionsWebHost__hostid'
+      // ...every name the app already marks sticky
+    ]
+  }
+}
 ```
 
 ### Cost impact
