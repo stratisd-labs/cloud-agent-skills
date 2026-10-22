@@ -30,6 +30,9 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 - `azure-resource-tagging` skill: a required tag set, a `vm-user` tag recording
   the login account on virtual machines, and the traps that break cost reports.
   It never fills in a person's address for `owner` itself.
+- Reference files (`reference/`): host ID collisions for Azure Functions, and
+  Azure Monitor query windows and workspace GUIDs, shared by
+  `azure-resource-naming`, `azure-cost-review` and `azure-fault-triage`.
 - `azure-blue-green-deploy` skill: releases through deployment slots, Container
   Apps revisions or two stacks, in a fixed order with the abort command written
   above every slot cut-over and a separate rollback for the window after it. A
