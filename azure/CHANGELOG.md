@@ -5,7 +5,7 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 [Semantic Versioning](https://semver.org/). Each release is tagged
 `azure--vX.Y.Z`.
 
-## [0.1.0] - Unreleased
+## [1.0.0] - 2026-10-22
 
 ### Added
 
