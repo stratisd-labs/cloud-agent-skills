@@ -58,11 +58,11 @@ cheaper to confirm than an application cause.
 
 ### App Service and Functions
 
-- **Platform restarts.** They don't appear in the activity log; only a
-  `SiteStarted` shows that the app started. Read Resource Health history, and
-  ask the human to run the Web App Restarted detector under Diagnose and solve
-  problems. A restart lines up with 5xx bursts and cold starts. On one instance,
-  every platform upgrade is downtime.
+- **Platform restarts.** [Routine maintenance][maint] restarts apps, and those
+  restarts don't reliably appear in the activity log. Read Resource Health
+  history, and ask the human to run the Web App Restarted detector under
+  Diagnose and solve problems. A restart lines up with 5xx bursts and cold
+  starts. On a single instance, it's downtime.
 - **Slot swaps.** A swap restarts the target's workers. Look for
   `Microsoft.Web/sites/slots/slotsswap/action` in the activity log; one just
   before the start makes the swapped build the first suspect. To roll back, hand
@@ -95,7 +95,7 @@ cheaper to confirm than an application cause.
   Health API or the Azure MCP.
 - **A clean activity log doesn't clear the platform.** It records control plane
   operations: deployments, swaps, scaling, config writes. Platform maintenance
-  and crashes don't appear there.
+  and crashes don't reliably appear there.
 - **`az monitor activity-log list` reads 6 hours and 50 events by default.**
   Pass `--start-time`, `--end-time` and `--max-events`, or the change that
   caused a morning incident is cut off. The Azure MCP's activity log command
@@ -190,7 +190,9 @@ az containerapp logs show --resource-group <RG> --name <APP> \
   --type system --tail 50
 ```
 
-`--timespan` takes `<START>/<END>` in ISO 8601, UTC.
+`--timespan` takes `<START>/<END>` in ISO 8601, UTC. The Service Health query
+follows Learn's [Resource Graph samples for Service Health][rg-sh]; the Resource
+Health call follows [Availability Statuses - List][rh-api].
 
 ## Output
 
@@ -221,6 +223,11 @@ Last verified: 2026-10-22
 [rh]: https://learn.microsoft.com/azure/service-health/resource-health-overview
 [activity]:
   https://learn.microsoft.com/azure/azure-monitor/fundamentals/activity-log
+[rg-sh]: https://learn.microsoft.com/azure/service-health/resource-graph-samples
+[rh-api]:
+  https://learn.microsoft.com/rest/api/resourcehealth/availability-statuses/list
+[maint]:
+  https://learn.microsoft.com/azure/app-service/routine-maintenance-downtime
 [as-diag]: https://learn.microsoft.com/azure/app-service/overview-diagnostics
 [aca-fail]:
   https://learn.microsoft.com/azure/container-apps/troubleshoot-deployment-errors
