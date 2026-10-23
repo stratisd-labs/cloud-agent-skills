@@ -5,6 +5,6 @@ allowed_tools: [Read, Glob, Grep, Skill]
 runs: 3
 ---
 
-I need a name for a new Azure key vault. Workload: orderintake. Environment:
+I need a name for a new Azure key vault. App: shop. Domain: orders. Environment:
 production. Region: westeurope. Greenfield subscription, no naming convention
 yet. Give me the name and anything I should check before I create it.

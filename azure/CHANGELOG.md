@@ -5,6 +5,31 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 [Semantic Versioning](https://semver.org/). Each release is tagged
 `azure--vX.Y.Z`.
 
+## [2.0.0] - Unreleased
+
+### Changed
+
+- **BREAKING:** `azure-resource-naming` uses
+  `<type>-<app>-<domain>-<env>-<region>[-<##>]` instead of
+  `<type>-<workload>-<env>-<region>[-<###>]`. The workload splits into the
+  product and the part of it a resource serves, with `shared` for common
+  infrastructure. `app`, `domain` and `env` are closed lists written once in
+  IaC, and the tags take the same values. A missing domain is a blocker the
+  agent asks about, never one it invents.
+- **BREAKING:** the environment set is `dev01` to `dev99`, `stg` and `prod`,
+  plus the shared scopes `dev` (what the dev environments share), `release`
+  (what `stg` and `prod` share) and `global`.
+- **BREAKING:** instance numbers have two digits, from `01`.
+- `azure-resource-naming` length budgets are counted for `dev01` and `release`,
+  and it warns that `dev` never names one dev environment.
+
+### Removed
+
+- **BREAKING:** `test` from the environment set; `stg` covers it.
+
+To keep the 1.x convention, write it into your project's `AGENTS.md`, docs or
+IaC: the skill follows a convention the project defines over its own.
+
 ## [1.0.0] - 2026-10-22
 
 ### Added
