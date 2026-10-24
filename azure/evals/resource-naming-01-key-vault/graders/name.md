@@ -3,4 +3,4 @@ type: regex
 match: contains
 ---
 
-kv-orderintake-prod-weu
+kv-shop-orders-prod-weu

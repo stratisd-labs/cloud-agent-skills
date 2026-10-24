@@ -35,25 +35,57 @@ resource.
 ## Convention
 
 ```text
-<type>-<workload>-<env>-<region>[-<###>]
+<type>-<app>-<domain>-<env>-<region>[-<##>]
 ```
 
-Lowercase, hyphen-separated, always in this order.
+Lowercase, hyphen-separated, always in this order. For example,
+`stapp-app1-web-stg-weu` or `kv-app1-shared-dev-weu`.
 
-- `<type>`: the CAF abbreviation, for example `ca`, `func`, `kv`, `st`. Never
-  invent one. If CAF has none, ask.
-- `<workload>`: the workload, app or project. Add a component after it for
-  multi-service workloads: `ca-<workload>-api-prod-weu`.
-- `<env>`: `dev`, `test`, `stg` or `prod`. Keep the set closed.
-- `<region>`: a short code from the table below. Microsoft publishes no official
-  short codes, so one table must be the single source.
-- `<###>`: optional, three digits. See Instance numbers below.
+- `<type>`: the CAF abbreviation, for example `ca`, `func`, `kv`, `st`, `stapp`.
+  Never invent one. If CAF has none, ask.
+- `<app>`: the product the resource belongs to.
+- `<domain>`: the part of the app it serves, such as `web`, `mobile`,
+  `authentication` or `telemetry`, or `shared` for infrastructure the app's
+  domains share. CAF calls this the workload component and makes it optional;
+  here it's always there.
+- `<env>`: one of the environments below.
+- `<region>`: a short code from the table below.
+- `<##>`: optional, two digits. See Instance numbers below.
 
-Resource groups follow the same pattern: `rg-<workload>-<env>-<region>`.
+Resource groups follow the same pattern, one per app domain per environment:
+`rg-<app>-<domain>-<env>-<region>`.
+
+### Closed value lists
+
+`<app>`, `<domain>` and `<env>` each have a closed list, written once in the
+project's IaC. A new app, domain or environment is added to the list first, then
+used. The `app`, `domain`, `environment` and `region` tags take the same values
+from the same variables, so a resource's name and tags can't disagree.
+
+- **Never invent a domain.** If the task doesn't say which part of the app the
+  resource serves, ask. Never drop the component to make the name fit.
+- **Give each domain its own `app` and `domain` values in IaC**, even when two
+  domains share an app today. One shared variable breaks the day they diverge.
+
+### Environments
+
+| `<env>`         | What it is                                       |
+| --------------- | ------------------------------------------------ |
+| `dev01`…`dev99` | Identical dev environments, for parallel testing |
+| `stg`           | Staging, from the same definition as production  |
+| `prod`          | Production                                       |
+| `dev`           | What the dev environments share                  |
+| `release`       | What `stg` and `prod` share                      |
+| `global`        | What every environment uses, such as IaC state   |
+
+A resource shared by every dev environment is
+`<type>-<app>-shared-dev-<region>`, such as `sbns-app1-shared-dev-weu`. `test`
+isn't in the set: `stg` covers it.
 
 ### Region codes
 
-Extend this table; never improvise a code in a single name.
+Extend this table; never improvise a code in a single name. The `region` tag
+uses the same codes.
 
 | Region               | Code   |
 | -------------------- | ------ |
@@ -72,19 +104,19 @@ Extend this table; never improvise a code in a single name.
 
 Types that allow only lowercase letters and digits, such as storage accounts and
 container registries, drop the hyphens and keep the order:
-`st<workload><env><region>[###]`.
+`st<app><domain><env><region>[##]`.
 
 ### Instance numbers
 
 Omit the suffix by default. Add one only when the name is already taken, often
 by another tenant for globally unique types, or when deploying identical
-siblings. Number from `001`. A second sibling of an unsuffixed resource is
-`002`, because the original is implicitly `001` and can't be renamed.
+siblings. Number from `01`. A second sibling of an unsuffixed resource is `02`,
+because the original is implicitly `01` and can't be renamed.
 
 ### Deployment slots
 
 The name carries the environment of the app's whole lifecycle, not of a slot. A
-production app with a pre-production slot is `func-<workload>-prod-weu` with
+production app with a pre-production slot is `func-<app>-<domain>-prod-weu` with
 slot `preprod`. Name the app `stg` only if the app itself never serves
 production traffic.
 
@@ -93,19 +125,24 @@ with the `stg` environment.
 
 ### Length budgets
 
-The pattern eats most of the budget on these types. Check the workload fits
-before proposing, and shorten the workload, never the other components.
+The pattern eats most of the budget on these types. Check `<app>` and `<domain>`
+fit before proposing. Shorten the app or the domain, never the other components.
+The room below counts both together, with the hyphen between them, for a
+three-letter region and no suffix.
 
-| Type            | Limit | Room for `<workload>`, no suffix |
-| --------------- | ----- | -------------------------------- |
-| Key vault       | 24    | `kv-…-prod-weu`: 12              |
-| Storage account | 24    | `st…prodweu`: 15                 |
-| Container app   | 32    | `ca-…-prod-weu`: 20              |
-| Function app    | 32\*  | `func-…-prod-weu`: 18            |
+| Type            | Limit | Room in `dev01` | Room in `release` |
+| --------------- | ----- | --------------- | ----------------- |
+| Key vault       | 24    | 11              | 9                 |
+| Storage account | 24    | 14, no hyphen   | 12, no hyphen     |
+| Container app   | 32    | 19              | 17                |
+| Function app    | 32\*  | 17              | 15                |
+
+A four-letter region such as `eus2` takes one more, and a suffix three more (two
+without hyphens). `prod` and `stg` leave one and two more than `dev01`.
 
 \* The function app name allows 60 characters, but keep it to 32: longer names
-can collide on host ID, and this pattern's `prod` and `stg` twins collide first.
-See [host ID collisions][hostid].
+can collide on host ID, and this pattern's environment twins, such as `dev01`
+and `dev02`, collide first. See [host ID collisions][hostid].
 
 A Windows VM's resource name can take 64 characters, but its host name
 (`computerName`) takes only 15. Don't reuse the resource name as the host name;
@@ -113,6 +150,9 @@ give the host name its own short scheme.
 
 ## Gotchas
 
+- **`dev` is never one dev environment.** It names what `dev01`…`dev99` share. A
+  resource that belongs to one dev environment carries that environment, such as
+  `dev02`, or it's torn down with the wrong one.
 - **Key vault names stay reserved after deletion.** A soft-deleted vault keeps
   its global name for the whole retention period, 7 to 90 days, and purge
   protection makes that unskippable. Tearing down and redeploying the same name
@@ -142,23 +182,54 @@ For each resource, give:
 
 1. The proposed name, and its length against the type's limit.
 2. Which checks ran and what they returned, or why a check was skipped.
-3. An IaC snippet in the project's IaC language. For Bicep:
+3. An IaC snippet in the project's IaC language that builds the name from the
+   closed lists, so the resource group, the resources and the tags share one
+   base. For Bicep:
 
    ```bicep
-   param workload string
+   @allowed(['<APP>'])
+   param app string
+   @allowed(['web', 'shared'])
+   param domain string
+   @allowed(['dev01', 'dev02', 'stg', 'prod', 'dev', 'release'])
    param env string
    param regionCode string
 
+   var base = '${app}-${domain}-${env}-${regionCode}'
+
    resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
-     name: 'kv-${workload}-${env}-${regionCode}'
+     name: 'kv-${base}'
      location: resourceGroup().location
      // ...
    }
    ```
 
-Flag any length overflow or taken name as a blocker, not a note.
+   For Terraform, one naming module that whatever creates the resource groups
+   and whatever deploys into them both call:
 
-Last verified: 2026-09-27
+   ```hcl
+   variable "domain" {
+     type = string
+     validation {
+       condition     = contains(["web", "shared"], var.domain)
+       error_message = "Add the domain to the list first."
+     }
+   }
+   # ...app, environment and region_short the same way
+
+   locals {
+     base = "${var.app}-${var.domain}-${var.environment}-${var.region_short}"
+   }
+
+   output "base" { value = local.base }
+   output "resource_group" { value = "rg-${local.base}" }
+   output "compact" { value = replace(local.base, "-", "") }
+   ```
+
+Flag any length overflow, taken name, or value outside the project's lists as a
+blocker, not a note. A missing domain is a blocker too: ask for it.
+
+Last verified: 2026-10-24
 
 [hostid]: ../../reference/azure-functions/configuration.md
 [caf-naming]:

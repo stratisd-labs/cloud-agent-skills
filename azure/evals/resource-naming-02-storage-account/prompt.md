@@ -5,5 +5,5 @@ allowed_tools: [Read, Glob, Grep, Skill]
 runs: 3
 ---
 
-Name a storage account for the orderintake workload, production, West Europe. We
-have no naming convention yet.
+Name a storage account for the orders domain of the shop app, production, West
+Europe. We have no naming convention yet.
