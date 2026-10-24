@@ -2,5 +2,6 @@
 type: llm
 ---
 
-The answer says yes, the name is valid for an Azure key vault. Any reason given
-in support, such as the length limit or the allowed characters, is fine.
+The answer says Azure accepts the name as a key vault name, for example because
+of its length or allowed characters. It may also say the name doesn't follow a
+naming convention, such as a missing domain part; that still passes.
