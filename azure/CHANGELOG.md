@@ -29,6 +29,9 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   only on resources that answer on a custom hostname. Every tag but `owner`,
   `managedby`, `webdomain` and `vmuser` has a closed value list in IaC, built
   from the same variables as the name.
+- `reference/conventions/vocabulary.md` holds the environment set, region codes
+  and closed value lists that names and tags share. `azure-resource-naming` and
+  `azure-resource-tagging` both point to it.
 - **BREAKING:** tag keys are lowercase letters with no separator, so `vm-user`
   is now `vmuser`. An estate already tagged `vm-user` keeps it: a tag set the
   project defines wins.

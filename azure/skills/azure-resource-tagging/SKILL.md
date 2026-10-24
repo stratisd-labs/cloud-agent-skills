@@ -57,9 +57,9 @@ Traffic Manager rejects spaces. Lowercase letters alone work on every type.
 | `webdomain`    | The custom hostname it serves; see below | Never           |
 | `vmuser`       | The login account; virtual machines only | No              |
 
-`environment`, `app`, `domain` and `region` take their values from
-`azure-resource-naming`: its environment table, shared scopes `dev`, `release`
-and `global` included, and its region codes. Don't keep a second list here.
+`environment`, `app`, `domain` and `region` take their values from [estate
+vocabulary][vocab]: the environment set, shared scopes `dev`, `release` and
+`global` included, and the region codes. Read it before proposing tags.
 
 - **`opsteam`** is ideally the name of a GitHub team in the `managedby` repo.
 - **`managedby`** is the repository path, such as `<ORG>/<REPO>`.
@@ -115,8 +115,9 @@ What it's for:
 Every tag except `owner`, `managedby`, `webdomain` and `vmuser` has a closed
 list of allowed values, written once in the project's IaC. A plan or build fails
 on any other value, and a new value goes into the list first. `environment`,
-`app`, `domain` and `region` share their lists with the resource names; build
-both from the same variables, so a resource's name and tags can't disagree.
+`app`, `domain` and `region` share their lists with the resource names; see
+[estate vocabulary][vocab] for those lists and why both come from the same
+variables.
 
 Back the IaC check with an Azure Policy assignment that denies a tag value
 outside the list, for whatever is created outside the IaC.
@@ -137,9 +138,6 @@ outside the list, for whatever is created outside the IaC.
   > instead of filling it in. Note the exception in the output, so the tag is
   > replaced once the team has an address.
 
-- **A shared resource carries a shared scope.** A resource every dev environment
-  uses is `environment=dev` and `domain=shared`, never one of `dev01`…`dev99`,
-  or it's torn down with that environment.
 - **Tag each resource, not just its resource group.** Resources don't inherit
   group tags, so a tagged group still leaves the cost report empty.
 - **Update `vmuser` when the login account changes.** Azure records only the
@@ -261,6 +259,7 @@ exception is a note, not a blocker.
 
 Last verified: 2026-10-24
 
+[vocab]: ../../reference/conventions/vocabulary.md
 [arm-tags]:
   https://learn.microsoft.com/azure/azure-resource-manager/management/tag-resources
 [arm-tag-support]:

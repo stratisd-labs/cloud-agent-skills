@@ -48,57 +48,20 @@ Lowercase, hyphen-separated, always in this order. For example,
   `authentication` or `telemetry`, or `shared` for infrastructure the app's
   domains share. CAF calls this the workload component and makes it optional;
   here it's always there.
-- `<env>`: one of the environments below.
-- `<region>`: a short code from the table below.
+- `<env>`: an environment from [estate vocabulary][vocab].
+- `<region>`: a region code from [estate vocabulary][vocab].
 - `<##>`: optional, two digits. See Instance numbers below.
 
 Resource groups follow the same pattern, one per app domain per environment:
 `rg-<app>-<domain>-<env>-<region>`.
 
-### Closed value lists
+### Shared vocabulary
 
-`<app>`, `<domain>` and `<env>` each have a closed list, written once in the
-project's IaC. A new app, domain or environment is added to the list first, then
-used. The `app`, `domain`, `environment` and `region` tags take the same values
-from the same variables, so a resource's name and tags can't disagree.
-
-- **Never invent a domain.** If the task doesn't say which part of the app the
-  resource serves, ask. Never drop the component to make the name fit.
-- **Give each domain its own `app` and `domain` values in IaC**, even when two
-  domains share an app today. One shared variable breaks the day they diverge.
-
-### Environments
-
-| `<env>`         | What it is                                       |
-| --------------- | ------------------------------------------------ |
-| `dev01`…`dev99` | Identical dev environments, for parallel testing |
-| `stg`           | Staging, from the same definition as production  |
-| `prod`          | Production                                       |
-| `dev`           | What the dev environments share                  |
-| `release`       | What `stg` and `prod` share                      |
-| `global`        | What every environment uses, such as IaC state   |
-
-A resource shared by every dev environment is
-`<type>-<app>-shared-dev-<region>`, such as `sbns-app1-shared-dev-weu`. `test`
-isn't in the set: `stg` covers it.
-
-### Region codes
-
-Extend this table; never improvise a code in a single name. The `region` tag
-uses the same codes.
-
-| Region               | Code   |
-| -------------------- | ------ |
-| `westeurope`         | `weu`  |
-| `northeurope`        | `neu`  |
-| `germanywestcentral` | `gwc`  |
-| `francecentral`      | `frc`  |
-| `uksouth`            | `uks`  |
-| `swedencentral`      | `sdc`  |
-| `eastus`             | `eus`  |
-| `eastus2`            | `eus2` |
-| `westus2`            | `wus2` |
-| `southeastasia`      | `sea`  |
+`<app>`, `<domain>`, `<env>` and the region code each come from a closed list
+written once in the project's IaC, and the tags take the same values. The
+environment set, with the shared scopes `dev`, `release` and `global`, the
+region codes, and the rules for the lists are in [estate vocabulary][vocab].
+Read it before proposing a name.
 
 ### No-hyphen types
 
@@ -150,9 +113,6 @@ give the host name its own short scheme.
 
 ## Gotchas
 
-- **`dev` is never one dev environment.** It names what `dev01`…`dev99` share. A
-  resource that belongs to one dev environment carries that environment, such as
-  `dev02`, or it's torn down with the wrong one.
 - **Key vault names stay reserved after deletion.** A soft-deleted vault keeps
   its global name for the whole retention period, 7 to 90 days, and purge
   protection makes that unskippable. Tearing down and redeploying the same name
@@ -231,6 +191,7 @@ blocker, not a note. A missing domain is a blocker too: ask for it.
 
 Last verified: 2026-10-24
 
+[vocab]: ../../reference/conventions/vocabulary.md
 [hostid]: ../../reference/azure-functions/configuration.md
 [caf-naming]:
   https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
