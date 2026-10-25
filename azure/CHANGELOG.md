@@ -20,7 +20,7 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   `stg`, `prod`, `release` (what `stg` and `prod` share) and `global`. A product
   uses the subset its team size and application scale call for. `dev` is the dev
   environment while there's only one, and what the numbered ones share once they
-  exist.
+  exist. `azure-resource-naming` and `azure-resource-tagging` follow this rule.
 - **BREAKING:** instance numbers have two digits, from `01`.
 - `azure-resource-naming` length budgets are counted for `dev01` and `release`.
 - **BREAKING:** `azure-resource-tagging` proposes a new greenfield tag set:

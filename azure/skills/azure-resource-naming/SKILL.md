@@ -58,10 +58,11 @@ Resource groups follow the same pattern, one per app domain per environment:
 ### Shared vocabulary
 
 `<app>`, `<domain>`, `<env>` and the region code each come from a closed list
-written once in the project's IaC, and the tags take the same values. The
-environment set, with the shared scopes `dev`, `release` and `global`, the
-region codes, and the rules for the lists are in [estate vocabulary][vocab].
-Read it before proposing a name.
+written once in the project's IaC, and the tags take the same values. A product
+uses only the environments its shape needs, and `dev` is its only dev
+environment until numbered ones exist, then the scope they share. The
+environment values, the region codes and the rules for the lists are in [estate
+vocabulary][vocab]. Read it before proposing a name.
 
 ### No-hyphen types
 
@@ -151,6 +152,7 @@ For each resource, give:
    param app string
    @allowed(['web', 'shared'])
    param domain string
+   // This product's subset of the environment values in estate vocabulary
    @allowed(['dev01', 'dev02', 'stg', 'prod', 'dev', 'release'])
    param env string
    param regionCode string
