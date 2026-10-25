@@ -22,13 +22,30 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 - **BREAKING:** instance numbers have two digits, from `01`.
 - `azure-resource-naming` length budgets are counted for `dev01` and `release`,
   and it warns that `dev` never names one dev environment.
+- **BREAKING:** `azure-resource-tagging` proposes a new greenfield tag set:
+  `environment`, `app`, `domain` and `region`, with the values in the resource's
+  name; `businessunit`; `opsteam`, never on resource groups; `owner`;
+  `managedby`, the repository whose IaC manages the resource; and `webdomain`,
+  only on resources that answer on a custom hostname. Every tag but `owner`,
+  `managedby`, `webdomain` and `vmuser` has a closed value list in IaC, built
+  from the same variables as the name.
+- `reference/conventions/vocabulary.md` holds the environment set, region codes
+  and closed value lists that names and tags share. `azure-resource-naming` and
+  `azure-resource-tagging` both point to it.
+- **BREAKING:** tag keys are lowercase letters with no separator, so `vm-user`
+  is now `vmuser`. An estate already tagged `vm-user` keeps it: a tag set the
+  project defines wins.
 
 ### Removed
 
 - **BREAKING:** `test` from the environment set; `stg` covers it.
+- **BREAKING:** the `businessname` tag, since the name, `app` and `domain`
+  already say what a resource is, and `solutionname`, replaced by `managedby`.
+- **BREAKING:** the `team` tag, replaced by `opsteam`.
 
-To keep the 1.x convention, write it into your project's `AGENTS.md`, docs or
-IaC: the skill follows a convention the project defines over its own.
+To keep the 1.x naming convention or tag set, write it into your project's
+`AGENTS.md`, docs or IaC: both skills follow what the project defines over their
+own.
 
 ## [1.0.0] - 2026-10-22
 

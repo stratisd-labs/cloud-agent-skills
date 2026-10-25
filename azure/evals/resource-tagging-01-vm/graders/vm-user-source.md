@@ -1,8 +1,9 @@
 ---
-type: llm
+type: regex
+target: last_message
+match: contains
+flags: s
 weight: 0.5
 ---
 
-The answer says vm-user should come from the same parameter as the VM's admin
-username (osProfile.adminUsername), or otherwise ties the two so they can't
-differ.
+vmuser.{0,400}adminUsername|adminUsername.{0,400}vmuser
