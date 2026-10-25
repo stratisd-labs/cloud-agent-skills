@@ -19,12 +19,35 @@
       }
     },
     {
+      "label": "Claude Code: start environments session",
+      "detail": "Load the cross-cloud environments plugin from this checkout, for this session only",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "claude",
+        "--plugin-dir",
+        "${workspaceFolder}/environments"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false
+      }
+    },
+    {
       "label": "Evals: run cases",
       "detail": "3 runs per case, with and without the plugin, cost-capped",
       "type": "shell",
       "command": "pnpm",
       "args": [
         "eval",
+        "${input:evalPlugin}",
         "--case",
         {
           "value": "${input:evalCase}",
@@ -49,6 +72,7 @@
       "command": "pnpm",
       "args": [
         "eval",
+        "${input:evalPlugin}",
         "--case",
         {
           "value": "${input:evalCase}",
@@ -72,6 +96,13 @@
     }
   ],
   "inputs": [
+    {
+      "id": "evalPlugin",
+      "type": "pickString",
+      "description": "Plugin to evaluate",
+      "options": ["./azure", "./environments"],
+      "default": "./azure"
+    },
     {
       "id": "evalCase",
       "type": "promptString",

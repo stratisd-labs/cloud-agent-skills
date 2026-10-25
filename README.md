@@ -1,7 +1,7 @@
 # cloud-agent-skills
 
-Azure architecture and DevOps expertise for AI agents, packaged as a Claude Code
-plugin. The agent reads live state and proposes a plan; you run the changes.
+Azure architecture and DevOps expertise for AI agents, packaged as Claude Code
+plugins. The agent reads live state and proposes a plan; you run the changes.
 
 ## What it is
 
@@ -24,6 +24,16 @@ The `azure` plugin ships these skills:
 Each one triggers on its own from the task you give the agent; you don't call
 them by name.
 
+The `environments` plugin is cross-cloud. It decides which environments a
+product needs from the size of its team, before any cloud is involved, and
+leaves building them to a cloud plugin:
+
+| Skill                       | Use it to                                     |
+| --------------------------- | --------------------------------------------- |
+| `environments-choose-shape` | Choose the environments a team needs by size. |
+
+It needs no MCP server, CLI or sign-in.
+
 ## Prerequisites
 
 - **Node.js**, which provides `npx`. The Azure MCP server runs through it.
@@ -35,6 +45,7 @@ them by name.
 ```bash
 claude plugin marketplace add stratisd-labs/cloud-agent-skills
 claude plugin install azure@cloud-agent-skills
+claude plugin install environments@cloud-agent-skills  # optional
 ```
 
 The plugin loads in your next session, or in an open one after
