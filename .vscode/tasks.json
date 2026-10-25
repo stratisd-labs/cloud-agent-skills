@@ -1,0 +1,82 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Claude Code: start azure session",
+      "detail": "Load Azure MCP and guard hook from this checkout, for this session only",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["exec", "claude", "--plugin-dir", "${workspaceFolder}/azure"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "Evals: run cases",
+      "detail": "3 runs per case, with and without the plugin, cost-capped",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "eval",
+        "--case",
+        {
+          "value": "${input:evalCase}",
+          "quoting": "strong"
+        }
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "Evals: quick check",
+      "detail": "One run, no baseline, cheapest",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "eval",
+        "--case",
+        {
+          "value": "${input:evalCase}",
+          "quoting": "strong"
+        },
+        "--runs",
+        "1",
+        "--ablation",
+        "none"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "evalCase",
+      "type": "promptString",
+      "description": "Case glob, such as resource-tagging-* or fault-triage-01-*",
+      "default": "resource-tagging-*"
+    }
+  ]
+}
