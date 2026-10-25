@@ -11,3 +11,8 @@ follow [Semantic Versioning](https://semver.org/). Each release is tagged
 
 - Plugin manifest (`.claude-plugin/plugin.json`). The plugin is cross-cloud: no
   MCP server and no hook, since it never reads or changes a cloud.
+- `environments-choose-shape` skill: which environments a product needs, chosen
+  by team size. A single developer gets `dev`, `prod` and `global`; a team of 2
+  to 5 adds `stg`, and may still deploy production by hand; a team of 6 to 15
+  gets numbered dev environments, `stg`, `prod` and the shared scopes `dev`,
+  `release` and `global`. Larger teams are beyond the skill, and it asks.
