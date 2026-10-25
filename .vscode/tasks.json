@@ -3,7 +3,7 @@
   "tasks": [
     {
       "label": "Claude Code: start azure session",
-      "detail": "claude --plugin-dir ./azure: skills, Azure MCP and guard hook from this checkout, for this session only",
+      "detail": "Load Azure MCP and guard hook from this checkout, for this session only",
       "type": "shell",
       "command": "pnpm",
       "args": ["exec", "claude", "--plugin-dir", "${workspaceFolder}/azure"],
@@ -20,7 +20,7 @@
     },
     {
       "label": "Evals: run cases",
-      "detail": "pnpm eval --case <glob>: 3 runs per case, with and without the plugin, cost-capped",
+      "detail": "3 runs per case, with and without the plugin, cost-capped",
       "type": "shell",
       "command": "pnpm",
       "args": [
@@ -44,7 +44,7 @@
     },
     {
       "label": "Evals: quick check",
-      "detail": "pnpm eval --case <glob> --runs 1 --ablation none: one run, no baseline, cheapest",
+      "detail": "One run, no baseline, cheapest",
       "type": "shell",
       "command": "pnpm",
       "args": [
