@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "environments",
+  "version": "1.0.0",
+  "description": "Cross-cloud agent skills for a product's environments: which ones a team needs by its size, before any cloud is involved. Pairs with a cloud plugin, such as azure, that builds the chosen layout.",
+  "author": {
+    "name": "Efstratios Dermanoutsos",
+    "url": "https://github.com/stratisd-labs"
+  },
+  "homepage": "https://github.com/stratisd-labs/cloud-agent-skills",
+  "repository": "https://github.com/stratisd-labs/cloud-agent-skills",
+  "license": "Apache-2.0",
+  "keywords": ["environments", "agent-skills", "devops", "platform-engineering"]
+}

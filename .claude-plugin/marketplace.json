@@ -4,11 +4,15 @@
     "name": "Efstratios Dermanoutsos",
     "url": "https://github.com/stratisd-labs"
   },
-  "description": "Agent skills for cloud architecture and DevOps: cost optimization, fault triage, blue-green deployments. Propose-only by default: agents output CLI plans, you execute.",
+  "description": "Agent skills for cloud architecture and DevOps: cost optimization, fault triage, blue-green deployments, and the environments a team needs. Propose-only by default: agents output CLI plans, you execute.",
   "plugins": [
     {
       "name": "azure",
       "source": "./azure"
+    },
+    {
+      "name": "environments",
+      "source": "./environments"
     }
   ]
 }
