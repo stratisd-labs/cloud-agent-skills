@@ -58,8 +58,10 @@ Traffic Manager rejects spaces. Lowercase letters alone work on every type.
 | `vmuser`       | The login account; virtual machines only | No              |
 
 `environment`, `app`, `domain` and `region` take their values from [estate
-vocabulary][vocab]: the environment set, shared scopes `dev`, `release` and
-`global` included, and the region codes. Read it before proposing tags.
+vocabulary][vocab]: the environment values and the region codes. A product uses
+only the environments its shape needs, and `dev` is its only dev environment
+until numbered ones exist, then the scope they share. Read it before proposing
+tags.
 
 - **`opsteam`** is ideally the name of a GitHub team in the `managedby` repo.
 - **`managedby`** is the repository path, such as `<ORG>/<REPO>`.
@@ -190,6 +192,7 @@ For each resource and resource group, give:
    param app string
    @allowed(['web', 'shared'])
    param domain string
+   // This product's subset of the environment values in estate vocabulary
    @allowed(['dev01', 'dev02', 'stg', 'prod', 'dev', 'release', 'global'])
    param env string
    @allowed(['weu'])

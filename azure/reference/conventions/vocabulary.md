@@ -12,35 +12,45 @@ baseline.
 **When to use it:** choosing the `<env>` in a name or the `environment` tag for
 a new resource, on a greenfield estate.
 
-**The decision:** use one of these, and nothing else.
+**The decision:** use only values from this set. A product uses the subset its
+shape calls for: the size of the team and the scale of the application decide
+it, so one product runs on `dev`, `prod` and `global`, and another on a dozen
+numbered dev environments. A value outside the set is never valid.
 
 | `<env>`         | What it is                                       |
 | --------------- | ------------------------------------------------ |
+| `dev`           | The only dev environment, or what `devNN` share  |
 | `dev01`…`dev99` | Identical dev environments, for parallel testing |
 | `stg`           | Staging, from the same definition as production  |
 | `prod`          | Production                                       |
-| `dev`           | What the dev environments share                  |
 | `release`       | What `stg` and `prod` share                      |
 | `global`        | What every environment uses, such as IaC state   |
 
-A resource shared by every dev environment uses `dev` with the `shared` domain:
-`sbns-<app>-shared-dev-<region>`, tagged `environment=dev`, `domain=shared`.
+Once there are numbered dev environments, a resource they all share uses `dev`
+with the `shared` domain: `sbns-<app>-shared-dev-<region>`, tagged
+`environment=dev`, `domain=shared`.
 
-**Why:** numbered dev environments let several people or pipelines test in
-parallel on identical copies. The shared scopes say what outlives any single
-environment, so a teardown of `dev02` can't take the shared message bus with it.
-`test` isn't in the set: `stg` covers it.
+**Why:** a single developer doesn't need a staging copy, and a large team can't
+share one dev environment. Numbered dev environments let several people or
+pipelines test in parallel on identical copies. The shared scopes say what
+outlives any single environment, so a teardown of `dev02` can't take the shared
+message bus with it. `test` isn't in the set: `stg` covers it.
 
 ### Gotchas
 
-- **`dev` is never one dev environment.** It names what `dev01`…`dev99` share. A
-  resource that belongs to one dev environment carries that environment, such as
-  `dev02`, or it's torn down with the wrong one.
+- **`dev` changes meaning when numbered dev environments appear.** While there's
+  one dev environment, `dev` is it. Once `dev01` exists, `dev` names only what
+  the numbered ones share, and a resource that belongs to one of them carries
+  that environment, such as `dev02`, or it's torn down with the wrong one.
+- **Moving from `dev` to `dev01` recreates the dev resources.** Most Azure
+  resource names can't change, and `dev`'s own resources now need `dev01` in
+  their names. Plan it as new resources plus a data move, not a rename.
 
 ### IaC
 
 ```bicep
-@allowed(['dev01', 'dev02', 'stg', 'prod', 'dev', 'release', 'global'])
+// The subset this product's shape uses, from the set above
+@allowed(['dev01', 'dev02', 'dev', 'stg', 'prod', 'release', 'global'])
 param env string
 ```
 
@@ -50,7 +60,7 @@ Each numbered dev environment is a full copy. Put what can be shared, such as a
 messaging namespace or a Log Analytics workspace, under `dev` so the copies
 don't multiply it.
 
-Last verified: 2026-10-24
+Last verified: 2026-10-25
 
 ## Region codes
 
