@@ -64,6 +64,10 @@ one folder per service with files per concern. An agent that fetches a WAF guide
 through the Learn MCP can find the matching delta file here without a lookup
 table, and a maintainer can see at a glance which service guides have coverage.
 
+Conventions that span every service, such as the environment set and region
+codes that names and tags share, have no WAF guide. They live in
+`reference/conventions/` instead of being bent into a service folder.
+
 ### Deltas only
 
 Learn is already available through its MCP and is kept up to date by Microsoft.

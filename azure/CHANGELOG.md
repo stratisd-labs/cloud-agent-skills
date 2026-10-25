@@ -5,6 +5,49 @@ All notable changes to the `azure` plugin are recorded here. The format follows
 [Semantic Versioning](https://semver.org/). Each release is tagged
 `azure--vX.Y.Z`.
 
+## [2.0.0] - 2026-10-25
+
+### Changed
+
+- **BREAKING:** `azure-resource-naming` uses
+  `<type>-<app>-<domain>-<env>-<region>[-<##>]` instead of
+  `<type>-<workload>-<env>-<region>[-<###>]`. The workload splits into the
+  product and the part of it a resource serves, with `shared` for common
+  infrastructure. `app`, `domain` and `env` are closed lists written once in
+  IaC, and the tags take the same values. A missing domain is a blocker the
+  agent asks about, never one it invents.
+- **BREAKING:** environments take their values from `dev`, `dev01` to `dev99`,
+  `stg`, `prod`, `release` (what `stg` and `prod` share) and `global`. A product
+  uses the subset its team size and application scale call for. `dev` is the dev
+  environment while there's only one, and what the numbered ones share once they
+  exist. `azure-resource-naming` and `azure-resource-tagging` follow this rule.
+- **BREAKING:** instance numbers have two digits, from `01`.
+- `azure-resource-naming` length budgets are counted for `dev01` and `release`.
+- **BREAKING:** `azure-resource-tagging` proposes a new greenfield tag set:
+  `environment`, `app`, `domain` and `region`, with the values in the resource's
+  name; `businessunit`; `opsteam`, never on resource groups; `owner`;
+  `managedby`, the repository whose IaC manages the resource; and `webdomain`,
+  only on resources that answer on a custom hostname. Every tag but `owner`,
+  `managedby`, `webdomain` and `vmuser` has a closed value list in IaC, built
+  from the same variables as the name.
+- `reference/conventions/vocabulary.md` holds the environment set, region codes
+  and closed value lists that names and tags share. `azure-resource-naming` and
+  `azure-resource-tagging` both point to it.
+- **BREAKING:** tag keys are lowercase letters with no separator, so `vm-user`
+  is now `vmuser`. An estate already tagged `vm-user` keeps it: a tag set the
+  project defines wins.
+
+### Removed
+
+- **BREAKING:** `test` from the environment set; `stg` covers it.
+- **BREAKING:** the `businessname` tag, since the name, `app` and `domain`
+  already say what a resource is, and `solutionname`, replaced by `managedby`.
+- **BREAKING:** the `team` tag, replaced by `opsteam`.
+
+To keep the 1.x naming convention or tag set, write it into your project's
+`AGENTS.md`, docs or IaC: both skills follow what the project defines over their
+own.
+
 ## [1.0.0] - 2026-10-22
 
 ### Added

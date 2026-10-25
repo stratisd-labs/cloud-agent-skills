@@ -41,7 +41,8 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   `claude --plugin-dir ./<cloud>`. It also loads the guard hook. Don't add a
   root `.mcp.json`: it would pin the server version in a second place.
 - Service folder names follow the Azure Well-Architected Framework service
-  guides.
+  guides. Conventions that span services, such as the environment set and region
+  codes, go in `<cloud>/reference/conventions/` instead.
 - A trap about one service starts in the first skill that needs it. When a
   second skill needs the same trap, move it to
   `<cloud>/reference/<service>/<topic>.md` in the same change, and point both

@@ -20,9 +20,9 @@ slots whose names match in the first 32 characters, on one storage account,
 share a host ID. On runtime 4.x that's a hard failure: the host logs `AZFD0004`
 and shuts down, so every function stops, timers and queues included. Earlier
 runtimes only logged a warning, which is why an upgrade can surface an old
-collision. Names that put the environment last, such as
-`func-<workload>-prod-weu` and `func-<workload>-stg-weu`, differ only at the
-end, so they collide first.
+collision. Names that put the environment near the end, such as
+`func-<app>-<domain>-dev01-weu` and `func-<app>-<domain>-dev02-weu`, differ only
+there, so they collide first.
 
 ### Gotchas
 
