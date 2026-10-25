@@ -72,10 +72,11 @@ for (const plugin of plugins) {
   // evals/<case>/mocks/<server>/. Each <tool>.md must name a tool the pinned
   // server still has, per the saved tools/list in evals/mocks/<server>/
   // _tools.json; `pnpm mocks:tools` refreshes that file after a version bump.
-  const mcpServers = Object.keys(
-    JSON.parse(readFileSync(join(root, plugin, ".mcp.json"), "utf8"))
-      .mcpServers ?? {}
-  );
+  // A plugin with no .mcp.json, such as a cross-cloud one, has no servers.
+  const mcpPath = join(root, plugin, ".mcp.json");
+  const mcpServers = existsSync(mcpPath)
+    ? Object.keys(JSON.parse(readFileSync(mcpPath, "utf8")).mcpServers ?? {})
+    : [];
   const mockDirs = [
     join(evalDir, "mocks"),
     ...cases.map((c) => join(evalDir, c.name, "mocks"))
