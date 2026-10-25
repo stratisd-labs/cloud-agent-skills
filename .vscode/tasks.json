@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Claude Code: session with the local azure plugin",
+      "detail": "claude --plugin-dir ./azure: skills, Azure MCP and guard hook from this checkout, for this session only",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["exec", "claude", "--plugin-dir", "${workspaceFolder}/azure"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false
+      }
+    }
+  ]
+}
