@@ -193,7 +193,7 @@ For each resource and resource group, give:
    @allowed(['web', 'shared'])
    param domain string
    // This product's subset of the environment values in estate vocabulary
-   @allowed(['dev01', 'dev02', 'stg', 'prod', 'dev', 'release', 'global'])
+   @allowed(['dev01', 'dev02', 'dev', 'stg', 'prod', 'release', 'global'])
    param env string
    @allowed(['weu'])
    param regionCode string
@@ -262,7 +262,7 @@ that differs from `osProfile.adminUsername` is a blocker too, unless the human
 confirms that's the account they log in as. A personal `owner` under the
 exception is a note, not a blocker.
 
-Last verified: 2026-10-24
+Last verified: 2026-10-25
 
 [vocab]: ../../reference/conventions/vocabulary.md
 [arm-tags]:

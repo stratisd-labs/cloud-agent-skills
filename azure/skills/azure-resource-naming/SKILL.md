@@ -153,7 +153,7 @@ For each resource, give:
    @allowed(['web', 'shared'])
    param domain string
    // This product's subset of the environment values in estate vocabulary
-   @allowed(['dev01', 'dev02', 'stg', 'prod', 'dev', 'release'])
+   @allowed(['dev01', 'dev02', 'dev', 'stg', 'prod', 'release', 'global'])
    param env string
    param regionCode string
 
@@ -191,7 +191,7 @@ For each resource, give:
 Flag any length overflow, taken name, or value outside the project's lists as a
 blocker, not a note. A missing domain is a blocker too: ask for it.
 
-Last verified: 2026-10-24
+Last verified: 2026-10-25
 
 [vocab]: ../../reference/conventions/vocabulary.md
 [hostid]: ../../reference/azure-functions/configuration.md
