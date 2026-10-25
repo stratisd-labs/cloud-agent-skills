@@ -6,4 +6,5 @@ runs: 3
 ---
 
 We're ten developers on app1, in three squads. Each squad usually has one
-feature in test at a time. Which environments should we have?
+feature in test at a time, and our IaC deploys a full environment in about ten
+minutes. Which environments should we have?

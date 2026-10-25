@@ -5,4 +5,4 @@ match: contains
 flags: is
 ---
 
-(?:by\shand|manual)
+per.{0,3}(?:feature.{0,3})?branch|ephemeral|short.lived
