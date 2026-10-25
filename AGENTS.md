@@ -5,17 +5,24 @@ this file.
 
 `cloud-agent-skills` packages Azure architecture and DevOps expertise as agent
 skills, distributed as a Claude Code plugin marketplace with one plugin per
-cloud. It holds only the deltas on top of Microsoft Learn. For the layout and
-the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
+cloud, plus cross-cloud plugins, such as `environments`, for decisions made
+before any cloud is involved. It holds only the deltas on top of Microsoft Learn
+and what agents already know. For the layout and the reasoning behind it, read
+[ARCHITECTURE.md](ARCHITECTURE.md).
 
-## Skills (`<cloud>/skills/<name>/SKILL.md`)
+## Skills (`<plugin>/skills/<name>/SKILL.md`)
 
-- Name every skill `<cloud>-<verb-phrase>`, for example `azure-cost-review`. The
-  folder name and the `name` field must match.
+- Name every skill `<plugin>-<verb-phrase>`: the cloud for a cloud plugin, such
+  as `azure-cost-review`, or the plugin's name for a cross-cloud one, such as
+  `environments-choose-shape`. The folder name and the `name` field must match.
 - Name skills after tasks, not resource types. A resource type belongs in
   `reference/`.
-- The `description` opens with the cloud name and states when to trigger the
-  skill.
+- The `description` opens with the cloud name, or with the topic and "on any
+  cloud" for a cross-cloud skill, and states when to trigger the skill.
+- A cross-cloud skill never names a cloud's resources, SKUs or commands. It
+  outputs a layout in neutral terms and points to the cloud plugin that builds
+  it. Its delta is measured against the no-plugin eval arm, since Learn holds no
+  baseline for it.
 - Point to the reference files the skill needs instead of copying their content.
 - Any skill that touches cloud state must follow `azure-propose-only`: it
   outputs a plan and never executes one.
@@ -85,10 +92,11 @@ the reasoning behind it, read [ARCHITECTURE.md](ARCHITECTURE.md).
   miss content deep in answers of several thousand characters.
 - A case that lets the agent run commands grants `Bash(az:*)` only, so the guard
   hook is what stands between the agent and Azure.
-- Run `pnpm eval` before merging a skill change, or
-  `pnpm eval --case "<skill>-*"` for one skill. It has a cost cap built in. Bash
-  cases need a sandbox backend: `bubblewrap` and `socat` on Linux, built in on
-  macOS. Run it as a non-root user; as root the sandbox can't start a shell.
+- Run `pnpm eval ./<plugin>` before merging a skill change, or
+  `pnpm eval ./<plugin> --case "<skill>-*"` for one skill. It has a cost cap
+  built in. Bash cases need a sandbox backend: `bubblewrap` and `socat` on
+  Linux, built in on macOS. Run it as a non-root user; as root the sandbox can't
+  start a shell.
 - `--allow-tools` grants Bash to every case in the run, whatever a case's own
   `allowed_tools` says. Write cases that pass with or without it.
 - Mock the Azure MCP for a case whose right answer depends on what discovery

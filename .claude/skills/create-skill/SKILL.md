@@ -179,8 +179,8 @@ This is the contract between the skill and the human, so make it concrete:
 3. Run `pnpm exec claude plugin validate <cloud> --strict`.
 4. Add eval cases under `<cloud>/evals/` as `AGENTS.md` describes, or for a
    change, add or update a case that would fail without it. Run `pnpm test`,
-   then `pnpm eval --case "<skill>-*"`. A skill whose cases don't beat the
-   no-plugin arm has no delta left; go back to step 1.
+   then `pnpm eval ./<cloud> --case "<skill>-*"`. A skill whose cases don't beat
+   the no-plugin arm has no delta left; go back to step 1.
 5. Search the new files for anything that isn't a placeholder: client names,
    emails, IDs, resource names. Output from a live check is the likeliest
    source; write what it returned as placeholders.

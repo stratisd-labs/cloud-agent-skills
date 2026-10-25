@@ -16,7 +16,7 @@ live in [AGENTS.md](AGENTS.md).
 
 ```text
 cloud-agent-skills/
-  .claude-plugin/marketplace.json   # catalog: lists azure (aws, gcp later)
+  .claude-plugin/marketplace.json   # catalog: azure, environments
   .claude/skills/create-skill/      # maintainer-only: how to add a skill
   AGENTS.md                         # maintainer instructions
   CLAUDE.md                         # imports AGENTS.md
@@ -36,6 +36,9 @@ cloud-agent-skills/
       virtual-network/  key-vault/ ...
     hooks/                          # PreToolUse guard + its policy JSON
     evals/                          # maintainer-only: claude plugin eval
+  environments/                     # cross-cloud plugin: no MCP, no hook
+    skills/environments-choose-shape/
+    evals/
   tests/                            # maintainer-only: hook tests
   aws/  gcp/                        # empty until there's real depth
 ```
@@ -87,6 +90,19 @@ copy skill folders straight into other agent tools, where two skills both called
 `cost-review` would collide. The prefix makes every name globally unique, and a
 description that opens with the cloud stops an Azure skill from triggering on an
 AWS task.
+
+### Cross-cloud plugins
+
+Some decisions come before any cloud: how many environments a team needs, what
+they share, who deploys production. Writing them into the `azure` plugin would
+make every future cloud plugin restate them. So they live in a cross-cloud
+plugin, `environments`, that outputs a layout in neutral terms, and each cloud
+plugin builds that layout with its own services and commands.
+
+A cross-cloud plugin has no MCP server and no hook, because it never reads or
+changes a cloud. Learn holds no baseline for it, so its evals are the proof of a
+delta: a skill whose cases don't beat the no-plugin arm restates what the model
+already knows.
 
 ### One subdirectory and one `plugin.json` per plugin
 
