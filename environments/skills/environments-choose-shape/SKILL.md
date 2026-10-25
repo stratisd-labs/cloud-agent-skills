@@ -45,14 +45,18 @@ mentions them, and don't let them move the tier.
 
 ## Tiers
 
-| Team | Environments           | Shared scopes              | Production    |
-| ---- | ---------------------- | -------------------------- | ------------- |
-| 1    | `dev`, `prod`          | `global`                   | By hand       |
-| 2-5  | `dev`, `stg`, `prod`   | `global`                   | By hand       |
-| 6-15 | `devNN`, `stg`, `prod` | `dev`, `release`, `global` | Pipeline only |
-| 16+  | Beyond this skill: ask |                            |               |
+| Team | Environments           | Shared scopes   |
+| ---- | ---------------------- | --------------- |
+| 1    | `dev`, `prod`          | `global`        |
+| 2-5  | `dev`, `stg`, `prod`   | `global`        |
+| 6-15 | `devNN`, `stg`, `prod` | `dev`, `global` |
+| 16+  | Beyond this skill: ask |                 |
 
 `devNN` is `dev01`, `dev02` and so on, one per dev environment.
+
+At every size, production is deployed only by its pipeline, end to end. Nobody
+deploys it by hand, not even a single developer: automation is what makes a
+deployment repeatable, and a manual step is where it drifts.
 
 What each environment is for:
 
@@ -63,20 +67,25 @@ What each environment is for:
   definition as production.
 - **`prod`**: what users see.
 - **Shared scopes**: `global` holds what every environment uses, such as IaC
-  state and pipeline identities. `dev` and `release` hold what the dev
-  environments, or `stg` and `prod`, share.
+  state and pipeline identities. `dev` holds what the numbered dev environments
+  share.
+- **`release`** isn't an environment and holds no resources. It's the definition
+  `stg` and `prod` are both built from, such as one IaC module they each call
+  with their own values, so staging can't drift from production.
 
 ### Why these tiers
 
 - **1 person:** nobody else's change can surprise production, so a staging copy
   rehearses nothing that `dev` doesn't. It only doubles the cost.
 - **2 to 5:** a second person's change can now reach production, so staging
-  earns its place. With few people, the rules aren't strict yet, so deploying
-  production by hand is acceptable.
+  earns its place.
 - **6 to 15:** several features are in test at once, and people queue for a
   single dev environment. One dev environment per work stream that tests at the
-  same time, at least two, all from one definition. With this many people,
-  production is applied only by its pipeline.
+  same time, at least two, all from one definition. If the IaC can stand up a
+  whole environment in minutes, offer the alternative: one short-lived
+  environment per feature branch, created when the branch opens and destroyed
+  when it merges. It costs less and can't drift, but needs that automation
+  first.
 - **More than 15, or tens of services:** the shape depends on how the teams and
   services are split, which this skill doesn't model yet. Say so, and ask how
   the teams and services divide before proposing anything.
@@ -91,6 +100,8 @@ What each environment is for:
 - **Moving from `dev` to `dev01` renames the dev environment.** Cloud resource
   names usually can't change, so the cloud plugin plans it as new resources and
   a data move. Say so when a team crosses from 5 to 6.
+- **Never deploy production by hand.** Not for a solo developer, not for an
+  urgent fix. The pipeline is the only path, so every deployment is the same.
 - **Count deployers, not headcount.** A company of fifty with three people on
   the product is a team of 3.
 
@@ -99,10 +110,11 @@ What each environment is for:
 Give, in order:
 
 1. **Team size** used, and where it came from. If it's missing, stop and ask.
-2. **Tier**, and the environments, shared scopes and who deploys production, as
-   a table.
+2. **Tier**, and the environments and shared scopes, as a table. Say that
+   production is deployed only by its pipeline.
 3. **For 6 to 15:** the number of numbered dev environments, from the work
-   streams that test at once, and the reason.
+   streams that test at once, and the reason. Offer per-branch environments when
+   the IaC can create one in minutes.
 4. **What changes next:** which tier the team moves to as it grows, and what
    moving costs, such as renaming `dev` to `dev01`.
 5. **Next step:** point to the cloud plugin that builds the layout. Don't name
