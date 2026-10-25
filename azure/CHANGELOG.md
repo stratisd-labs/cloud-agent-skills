@@ -16,12 +16,13 @@ All notable changes to the `azure` plugin are recorded here. The format follows
   infrastructure. `app`, `domain` and `env` are closed lists written once in
   IaC, and the tags take the same values. A missing domain is a blocker the
   agent asks about, never one it invents.
-- **BREAKING:** the environment set is `dev01` to `dev99`, `stg` and `prod`,
-  plus the shared scopes `dev` (what the dev environments share), `release`
-  (what `stg` and `prod` share) and `global`.
+- **BREAKING:** environments take their values from `dev`, `dev01` to `dev99`,
+  `stg`, `prod`, `release` (what `stg` and `prod` share) and `global`. A product
+  uses the subset its team size and application scale call for. `dev` is the dev
+  environment while there's only one, and what the numbered ones share once they
+  exist.
 - **BREAKING:** instance numbers have two digits, from `01`.
-- `azure-resource-naming` length budgets are counted for `dev01` and `release`,
-  and it warns that `dev` never names one dev environment.
+- `azure-resource-naming` length budgets are counted for `dev01` and `release`.
 - **BREAKING:** `azure-resource-tagging` proposes a new greenfield tag set:
   `environment`, `app`, `domain` and `region`, with the values in the resource's
   name; `businessunit`; `opsteam`, never on resource groups; `owner`;
