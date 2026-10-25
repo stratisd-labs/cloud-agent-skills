@@ -135,8 +135,10 @@ outside the list, for whatever is created outside the IaC.
   > email of the person accountable for the resource. Never a private address,
   > and never pick the person yourself: ask the human. Even when you can see an
   > address, such as the human's own, write the placeholder `<OWNER_WORK_EMAIL>`
-  > instead of filling it in. Note the exception in the output, so the tag is
-  > replaced once the team has an address.
+  > instead of filling it in. The same goes for examples: never build one from
+  > the human's address or their organization's domain; write `<TEAM_MAILBOX>`.
+  > Note the exception in the output, so the tag is replaced once the team has
+  > an address.
 
 - **Tag each resource, not just its resource group.** Resources don't inherit
   group tags, so a tagged group still leaves the cost report empty.
